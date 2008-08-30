@@ -68,15 +68,15 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** root file */
     protected transient RemoteFile rootFile;
     /** Root of cache directory */
-    protected File cachedir = null;
+    protected File cacheDir = null;
     /** Server start directory */
-    protected String startdir = "/";
+    protected String startDir = "/";
     /** Login information */
-    protected LogInfo loginfo;
+    protected LogInfo logInfo;
     /** is read only */
     protected boolean readOnly;
     /** Request processor */
-    protected transient RequestProcessor requestproc;
+    protected transient RequestProcessor requestProc;
 
     /** Constructor.
      */
@@ -151,17 +151,17 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             client.disconnect();
         } else {
             try {
-                if (client == null || (client != null && client.compare(loginfo) != 0)) {
-                    client = createClient(loginfo, cachedir);
+                if (client == null || (client != null && client.compare(logInfo) != 0)) {
+                    client = createClient(logInfo, cacheDir);
                     rootFile = null;
                 }
                 client.connect();
                 if (rootFile == null) {
-                    RemoteFile root = createRootFile(client, cachedir);
-                    rootFile = root.find(startdir);
+                    RemoteFile root = createRootFile(client, cacheDir);
+                    rootFile = root.find(startDir);
                     if (rootFile == null) {
-                        startdirNotFound(startdir, loginfo.displayName());
-                        startdir = "/";
+                        startdirNotFound(startDir, logInfo.displayName());
+                        startDir = "/";
                         rootFile = root;
                     }
                 }
@@ -624,9 +624,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** Run in Request Processor.
      * @param run  */
     public void post(Runnable run) {
-        if (requestproc == null) {
-            requestproc = new RequestProcessor("Remote Filesystem Request Processor for " + loginfo.displayName());
+        if (requestProc == null) {
+            requestProc = new RequestProcessor("Remote Filesystem Request Processor for " + logInfo.displayName());
         }
-        requestproc.post(run);
+        requestProc.post(run);
     }
 } 

@@ -95,7 +95,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
         if (!connected) {  // will be disconnected
             // exists other filesystem with same server
             if (manager.moreOwners()) {
-                switch (disconnectDialog(loginfo.displayName())) {
+                switch (disconnectDialog(logInfo.displayName())) {
                     case 0:
                         removeClient();
                         break;
@@ -112,7 +112,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
         } else {
             try {
                 if (manager == null) {
-                    manager = RemoteManager.getRemoteManager(this, cachedir, loginfo);
+                    manager = RemoteManager.getRemoteManager(this, cacheDir, logInfo);
                     client = manager.getClient();
                     rootFile = null;
                     if (manager == null) {
@@ -121,7 +121,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
                 }
                 if (!isConnected()) {
                     if (manager.moreOwners()) {
-                        if (connectDialog(loginfo.displayName())) {
+                        if (connectDialog(logInfo.displayName())) {
                             manager.getClient().connect();
                         //TODO: notify other FS?
                         } else {
@@ -133,11 +133,11 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
                         manager.getClient().connect();
                     }
                 }
-                if (rootFile == null || (rootFile != null && !rootFile.getName().getFullName().equals(startdir))) {
-                    rootFile = manager.getRoot(startdir);
+                if (rootFile == null || (rootFile != null && !rootFile.getName().getFullName().equals(startDir))) {
+                    rootFile = manager.getRoot(startDir);
                     if (rootFile == null) {
-                        startdirNotFound(startdir, loginfo.displayName());
-                        startdir = "/";
+                        startdirNotFound(startDir, logInfo.displayName());
+                        startDir = "/";
                         rootFile = manager.getRoot();
                     }
                 }

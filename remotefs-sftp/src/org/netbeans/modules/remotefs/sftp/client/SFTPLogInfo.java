@@ -32,6 +32,14 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
     private String rootFolder;
     private JTextField passwordField;
 
+    public SFTPLogInfo() {
+        this("localhost", null);
+    }
+
+    public SFTPLogInfo(String host, String user) {
+        this(host, SFTPClient.DEFAULT_PORT, System.getProperty("user.name"), null);
+    }
+
     public SFTPLogInfo(String host, String user, String password) {
         this(host, SFTPClient.DEFAULT_PORT, user, password);
     }
@@ -126,7 +134,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
     }
 
     public String displayName() {
-        return "sftp://" + user + "@" + host + String.valueOf(port);
+        return "sftp://" + user + "@" + host + (port == SFTPClient.DEFAULT_PORT ? "" : ":" + String.valueOf(port));
     }
 
     public String getPassphrase() {

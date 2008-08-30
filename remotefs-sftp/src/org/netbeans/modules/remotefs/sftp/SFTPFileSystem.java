@@ -69,12 +69,16 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
         SFTPWORK = fo.getName();
     }
 
+    public SFTPFileSystem() {
+        this(new SFTPLogInfo());
+    }
+
     public SFTPFileSystem(SFTPLogInfo logInfo) {
         super();
-        this.loginfo = logInfo;
+        this.logInfo = logInfo;
         setRefreshTime(getSFTPSettings().getRefreshTime());
-        startdir = logInfo.getRootFolder();
-        cachedir = new File(getDefaultCache());
+        startDir = logInfo.getRootFolder();
+        cacheDir = new File(getDefaultCache());
         getSFTPSettings().addPropertyChangeListener(new PropertyChangeListener() {
 
             public void propertyChange(PropertyChangeEvent event) {
@@ -87,14 +91,14 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
      * @return root directory
      */
     public File getCache() {
-        return cachedir;
+        return cacheDir;
     }
 
     /** Get server name.
      * @return Value of property server.
      */
     public String getServer() {
-        return ((SFTPLogInfo) loginfo).getHost();
+        return ((SFTPLogInfo) logInfo).getHost();
     }
 
     /** Get FTPSettings object
@@ -109,11 +113,11 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     }
 
     private String computeSystemName() {
-        return loginfo.displayName();
+        return logInfo.displayName();
     }
 
     private String getDefaultCache() {
-        SFTPLogInfo sftpLogInfo = (SFTPLogInfo) loginfo;
+        SFTPLogInfo sftpLogInfo = (SFTPLogInfo) logInfo;
         return SFTPWORK + File.separator + sftpLogInfo.getHost() +
                 ((sftpLogInfo.getPort() == SFTPClient.DEFAULT_PORT) ? "" : ("_" + String.valueOf(sftpLogInfo.getPort()))) +
                 "_" + sftpLogInfo.getUser();
@@ -128,8 +132,8 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
 
     @Override
     public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
-        if (!cachedir.exists()) {
-            cachedir.mkdirs();
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
         }
         SFTPClient sftpClient = new SFTPClient((SFTPLogInfo) loginfo);
         sftpClient.setReconnect(this);

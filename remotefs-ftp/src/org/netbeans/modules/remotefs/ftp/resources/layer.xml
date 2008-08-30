@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.1//EN" "http://www.netbeans.org/dtds/filesystem-1_1.dtd">
 <filesystem>
+    <folder name="org-netbeans-modules-remotefs">
+        <folder name="remote-file-system">
+            <file name="org-netbeans-modules-remotefs-ftp-FTPFileSystemInfo.instance">
+                <attr name="position" intvalue="100"/>
+            </file>
+        </folder>
+    </folder>
 </filesystem>

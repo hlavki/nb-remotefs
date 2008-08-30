@@ -105,10 +105,10 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      */
     public FTPFileSystem(FTPLogInfo info) {
         super();
-        loginfo = info;
+        logInfo = info;
         setRefreshTime(getFTPSettings().getRefreshTime());
-        startdir = info.getRootFolder();
-        cachedir = new File(getDefaultCache());
+        startDir = info.getRootFolder();
+        cacheDir = new File(getDefaultCache());
         getFTPSettings().addPropertyChangeListener(new PropertyChangeListener() {
 
             public void propertyChange(PropertyChangeEvent event) {
@@ -152,11 +152,11 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      */
     private String computeSystemName() {
         //System.out.println("FTPFileSystem.prepareSystemName");
-        return loginfo.displayName();// + ((startdir != null && startdir.startsWith("/")) ? "" : "/") + startdir;
+        return logInfo.displayName();// + ((startdir != null && startdir.startsWith("/")) ? "" : "/") + startdir;
     }
 
     private String getDefaultCache() {
-        return FTPWORK + File.separator + ((FTPLogInfo) loginfo).getHost() + ((((FTPLogInfo) loginfo).getPort() == FTPClient.DEFAULT_PORT) ? "" : ("_" + String.valueOf(((FTPLogInfo) loginfo).getPort()))) + "_" + ((FTPLogInfo) loginfo).getUser();
+        return FTPWORK + File.separator + ((FTPLogInfo) logInfo).getHost() + ((((FTPLogInfo) logInfo).getPort() == FTPClient.DEFAULT_PORT) ? "" : ("_" + String.valueOf(((FTPLogInfo) logInfo).getPort()))) + "_" + ((FTPLogInfo) logInfo).getUser();
     }
 
     //****************************************************************************
@@ -179,23 +179,23 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
         if (!r.canWrite() || !r.canRead()) {
             throw new IOException("Can't read from or write to cache directory");
         }
-        cachedir = r;
+        cacheDir = r;
         enteredcachedir = true;
-        firePropertyChange("cache", null, cachedir); // NOI18N
+        firePropertyChange("cache", null, cacheDir); // NOI18N
     }
 
     /** Get the cache directory.
      * @return root directory
      */
     public File getCache() {
-        return cachedir;
+        return cacheDir;
     }
 
     /** Get server name.
      * @return Value of property server.
      */
     public String getServer() {
-        return ((FTPLogInfo) loginfo).getHost();
+        return ((FTPLogInfo) logInfo).getHost();
     }
 
     /** Set server name.
@@ -203,7 +203,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @throws PropertyVetoException
      */
     public void setServer(String server) throws java.beans.PropertyVetoException {
-        ((FTPLogInfo) loginfo).setHost(server);
+        ((FTPLogInfo) logInfo).setHost(server);
         propChanged();
     }
 
@@ -211,7 +211,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @return Value of property port.
      */
     public int getPort() {
-        return ((FTPLogInfo) loginfo).getPort();
+        return ((FTPLogInfo) logInfo).getPort();
     }
 
     /** Set port number.
@@ -219,7 +219,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @throws PropertyVetoException
      */
     public void setPort(int port) throws java.beans.PropertyVetoException {
-        ((FTPLogInfo) loginfo).setPort(port);
+        ((FTPLogInfo) logInfo).setPort(port);
         propChanged();
     }
 
@@ -227,7 +227,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @return Value of property username.
      */
     public String getUsername() {
-        return ((FTPLogInfo) loginfo).getUser();
+        return ((FTPLogInfo) logInfo).getUser();
     }
 
     /** Set user name.
@@ -235,7 +235,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @throws java.beans.PropertyVetoException 
      */
     public void setUsername(String username) throws PropertyVetoException {
-        ((FTPLogInfo) loginfo).setUser(username);
+        ((FTPLogInfo) logInfo).setUser(username);
         propChanged();
     }
 
@@ -243,7 +243,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @return Value of property password.
      */
     public String getPassword() {
-        return ((FTPLogInfo) loginfo).getPassword();
+        return ((FTPLogInfo) logInfo).getPassword();
     }
 
     /** Set password.
@@ -251,7 +251,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @throws java.beans.PropertyVetoException 
      */
     public void setPassword(String password) throws PropertyVetoException {
-        ((FTPLogInfo) loginfo).setPassword(password);
+        ((FTPLogInfo) logInfo).setPassword(password);
         propChanged();
     }
 
@@ -259,7 +259,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @return Value of property startdir.
      */
     public String getStartdir() {
-        return startdir;
+        return startDir;
     }
 
     /** Set starting directory.
@@ -277,14 +277,14 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
                 newstartdir = newstartdir.substring(0, newstartdir.length() - 1);
             }
         }
-        this.startdir = newstartdir;
+        this.startDir = newstartdir;
         removeClient();
     }
 
     /** Called when some parameter was changed. If connection is established, it must be reconnected. */
     private void propChanged() throws PropertyVetoException {
         if (!enteredcachedir) {
-            cachedir = new File(getDefaultCache());
+            cacheDir = new File(getDefaultCache());
         }
         removeClient();
         if (isConnected()) {
@@ -304,10 +304,10 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @throws java.io.IOException 
      */
     public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
-        if (!cachedir.exists()) {
-            cachedir.mkdirs();
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
         }
-        File logfile = new File(cachedir.getPath() + ".log");
+        File logfile = new File(cacheDir.getPath() + ".log");
         //RandomAccessFile logfile = new RandomAccessFile(cachedir.getPath()+".log","rw");
         //logfile.seek(logfile.length());
         FTPClient lClient = new FTPClient((FTPLogInfo) loginfo);
