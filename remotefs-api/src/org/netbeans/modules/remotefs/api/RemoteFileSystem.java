@@ -93,16 +93,16 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     @Override
     public SystemAction[] getActions() {
         SystemAction actions[] = super.getActions();
-        SystemAction newactions[] = new SystemAction[actions.length + 4];
+        SystemAction newActions[] = new SystemAction[actions.length + 4];
         for (int i = 0; i < actions.length; i++) {
-            newactions[i] = actions[i];
+            newActions[i] = actions[i];
         }
-        newactions[actions.length] = getAction(SynchronizeAction.class);
-        newactions[actions.length + 1] = getAction(DownloadAllAction.class);
-        newactions[actions.length + 2] = getAction(CleanCacheAction.class);
-        newactions[actions.length + 3] = getAction(ConnectAction.class);
-        ((ConnectAction) newactions[actions.length + 3]).setFS(this);
-        return newactions;
+        newActions[actions.length] = getAction(SynchronizeAction.class);
+        newActions[actions.length + 1] = getAction(DownloadAllAction.class);
+        newActions[actions.length + 2] = getAction(CleanCacheAction.class);
+        newActions[actions.length + 3] = getAction(ConnectAction.class);
+        ((ConnectAction) newActions[actions.length + 3]).setFS(this);
+        return newActions;
     }
 
     private SystemAction getAction(Class<? extends SystemAction> clazz) {
