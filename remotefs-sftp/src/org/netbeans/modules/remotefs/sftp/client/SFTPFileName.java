@@ -12,12 +12,13 @@ import org.netbeans.modules.remotefs.api.RemoteFileName;
  */
 public class SFTPFileName implements RemoteFileName {
 
-    public static final String ROOT_FOLDER = "/";
+    public static final String ROOT_FOLDER = ".";
+    public static final String EMPTY_NAME = "";
     private String name;
     private String directory;
 
     public SFTPFileName(String name, String directory) {
-        this.name = "".equals(name) ? null : name;
+        this.name = name;
         this.directory = directory;
     }
 
@@ -36,8 +37,8 @@ public class SFTPFileName implements RemoteFileName {
     /** Get full name (with whole path).
      * @return  full name*/
     public String getFullName() {
-        return (directory.equals(ROOT_FOLDER) ? "" : directory) +
-                (name.equals(ROOT_FOLDER) ? "" : ROOT_FOLDER) + name;
+        return (ROOT_FOLDER.equals(directory) ? "" : directory) +
+                (ROOT_FOLDER.equals(name) ? "" : ROOT_FOLDER) + name;
     }
 
     /** Get directory of this filename
@@ -56,6 +57,6 @@ public class SFTPFileName implements RemoteFileName {
     /** Get root
      * @return root */
     public static RemoteFileName getRoot() {
-        return new SFTPFileName(null, ROOT_FOLDER);
+        return new SFTPFileName(EMPTY_NAME, ROOT_FOLDER);
     }
 }

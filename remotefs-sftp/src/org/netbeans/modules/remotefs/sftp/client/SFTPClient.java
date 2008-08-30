@@ -8,6 +8,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +16,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteClient;
 import org.netbeans.modules.remotefs.api.RemoteFileAttributes;
@@ -28,6 +33,7 @@ import org.openide.util.Exceptions;
  */
 public class SFTPClient implements RemoteClient {
 
+    private static final Logger log = Logger.getLogger(SFTPClient.class.getName());
     /** Default FTP port number */
     public final static int DEFAULT_PORT = 22;
     private SFTPLogInfo logInfo;
@@ -49,8 +55,9 @@ public class SFTPClient implements RemoteClient {
         try {
             session = jsch.getSession(logInfo.getUser(), logInfo.getHost(), logInfo.getPort());
             session.setUserInfo(logInfo);
-            channel = (ChannelSftp) session.openChannel("sftp");
             session.connect();
+            channel = (ChannelSftp) session.openChannel("sftp");
+            channel.connect();
         } catch (JSchException e) {
             throw new SFTPException(e);
         }
@@ -142,18 +149,69 @@ public class SFTPClient implements RemoteClient {
      * {@inheritDoc}
      */
     public RemoteFileAttributes[] list(RemoteFileName directory) throws IOException {
+        String pwd = null;
+        Map<String, RemoteFileAttributes> dirList = new HashMap<String, RemoteFileAttributes>();
         try {
+            log.info("Listing directory " + directory.getFullName());
             Vector entries = channel.ls(directory.getFullName());
-            RemoteFileAttributes[] result = new RemoteFileAttributes[entries.size()];
             for (int idx = 0; idx < entries.size(); idx++) {
-                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) entries.get(idx);
-                // FIXME: I don't know how to recognize folder
-                result[idx] = new RemoteFileAttributes(new SFTPFileName(entry.getFilename(), directory.getFullName()), false);
+                boolean isDirectory = false;
+                ChannelSftp.LsEntry lsEntry = (ChannelSftp.LsEntry) entries.get(idx);
+                SftpATTRS attrs = lsEntry.getAttrs();
+                String fileName = lsEntry.getFilename();
+                if (fileName.length() > 1 && fileName.startsWith(".")) {
+                    // hide hidden files
+                    continue;
+                }
+                Date mtime = new Date(attrs.getMTime() * (long) 1000);
+                RemoteFileAttributes fileEntry;
+                if (attrs.isDir()) {
+                    isDirectory = true;
+                    if (fileName.equals(".") || fileName.equals("..")) {
+                        continue;
+                    }
+                    fileEntry = new RemoteFileAttributes(new SFTPFileName(fileName, directory.getFullName()),
+                            true, attrs.getSize(), mtime);
+                } else {
+                    if (attrs.isLink()) {
+                        try {
+                            if (pwd == null && !directory.getFullName().equals(".")) {
+                                SftpATTRS newAttrs = channel.stat(directory.getFullName());
+                                if (newAttrs.isDir()) {
+                                    pwd = channel.pwd();
+                                    try {
+                                        channel.cd(directory.getFullName());
+                                    } catch (SftpException e) {
+                                        pwd = null;
+                                    }
+                                }
+                            }
+                            SftpATTRS newAttrs = channel.stat(fileName);
+                            isDirectory = newAttrs.isDir();
+                            attrs = newAttrs;
+                            mtime = new Date(attrs.getMTime() * (long) 1000);
+                        } catch (SftpException ee) {
+                            continue;
+                        }
+                    }
+                    fileEntry = new RemoteFileAttributes(new SFTPFileName(fileName, directory.getFullName()),
+                            isDirectory, attrs.getSize(), mtime);
+                }
+                if (!dirList.containsKey(fileName)) {
+                    dirList.put(fileName, fileEntry);
+                }
             }
-            return result;
         } catch (SftpException e) {
             throw new SFTPException(e);
+        } finally {
+            try {
+                if (pwd != null) {
+                    channel.cd(pwd);
+                }
+            } catch (SftpException e) {
+            }
         }
+        return dirList.values().toArray(new RemoteFileAttributes[0]);
     }
 
     /**
@@ -212,7 +270,9 @@ public class SFTPClient implements RemoteClient {
      * {@inheritDoc}
      */
     public void close() {
-        channel.exit();
+        if (channel != null) {
+            channel.exit();
+        }
     }
 
     public void setReconnect(Reconnect reconnect) {

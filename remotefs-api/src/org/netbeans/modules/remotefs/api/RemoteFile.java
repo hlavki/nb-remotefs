@@ -47,13 +47,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /** Object that represent FTP file with cache.
  * @author Libor Martinek
@@ -74,7 +75,7 @@ public class RemoteFile {
     protected File file;
     /** Array of children */
     private RemoteFile[] children = new RemoteFile[0];
-    private Vector<RemoteFile> childrenvector = new Vector<RemoteFile>();
+    private List<RemoteFile> childrenList = new ArrayList<RemoteFile>();
     private RequestProcessor rp;
     /** Path separator */
     private static final String PATH_SEP = "/";
@@ -356,7 +357,7 @@ public class RemoteFile {
                 while (it.hasNext()) {
                     String name = (String) (it.next());
                     RemoteFileAttributes at = new RemoteFileAttributes(getName().createNew(name), new File(file, name).isDirectory());
-                    childrenvector.addElement(new RemoteFile(at, this, client, notify, rp, new File(file, name), false));
+                    childrenList.add(new RemoteFile(at, this, client, notify, rp, new File(file, name), false));
                     childrenchanged = true;
                 }
             }
@@ -377,7 +378,7 @@ public class RemoteFile {
                 Iterator it = set2_7.iterator();
                 while (it.hasNext()) {
                     RemoteFileAttributes at = serverMap.get(it.next());
-                    childrenvector.addElement(new RemoteFile(at, this, client, notify, rp, new File(file, at.getName().getName()), true));
+                    childrenList.add(new RemoteFile(at, this, client, notify, rp, new File(file, at.getName().getName()), true));
                     childrenchanged = true;
                 }
 
@@ -421,7 +422,7 @@ public class RemoteFile {
         }
 
         //System.out.println("RemoteFile.getChildren: childrenvector="+childrenvector);
-        children = childrenvector.toArray(children);
+        children = childrenList.toArray(children);
         return children;
     }
 
@@ -1023,7 +1024,7 @@ public class RemoteFile {
             }
             children = new RemoteFile[0];
             childrenchanged = true;
-            childrenvector.removeAllElements();
+            childrenList.clear();
             if (onserver && client.isConnected()) {
                 client.rmdir(getName());
             }
@@ -1050,8 +1051,8 @@ public class RemoteFile {
      * @param child fileobject of the child to delete
      */
     protected void deleteChild(RemoteFile child) {
-        childrenvector.removeElement(child);
-        children = childrenvector.toArray(children);
+        childrenList.remove(child);
+        children = childrenList.toArray(children);
         childrenchanged = true;
     }
 
@@ -1114,9 +1115,9 @@ public class RemoteFile {
      */
     private RemoteFile createFile(RemoteFileAttributes a, boolean onserver) throws IOException {
         RemoteFile newfile = new RemoteFile(a, this, client, notify, rp, new File(file, a.getName().getName()), onserver);
-        childrenvector.addElement(newfile);
+        childrenList.add(newfile);
         childrenchanged = true;
-        children = childrenvector.toArray(children);
+        children = childrenList.toArray(children);
         return newfile;
     }
 

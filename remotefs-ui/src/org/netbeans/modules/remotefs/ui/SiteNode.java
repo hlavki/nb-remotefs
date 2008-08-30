@@ -34,7 +34,7 @@ import org.openide.util.actions.SystemAction;
 public class SiteNode extends FilterNode {
 
     private RemoteFileSystem site;
-    private static final String ICON_PATH = "org/netbeans/modules/remotefs/ui/resources/connection-16x16.png";
+    private static final String ICON_PATH = "org/netbeans/modules/remotefs/ui/resources/connection-closed-16x16.png";
 
     public SiteNode(RemoteFileSystem site) throws DataObjectNotFoundException {
         super(DataObject.find(site.getRoot()).getNodeDelegate());

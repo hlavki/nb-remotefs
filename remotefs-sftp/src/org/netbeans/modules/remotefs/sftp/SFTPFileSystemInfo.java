@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
+import org.netbeans.modules.remotefs.sftp.client.SFTPLogInfo;
 import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
@@ -32,7 +33,8 @@ public class SFTPFileSystemInfo implements RemoteFileSystemInfo {
     }
 
     public List<RemoteFileSystem> getConnections() {
-        return Collections.<RemoteFileSystem>singletonList(new SFTPFileSystem());
+        SFTPLogInfo logInfo = new SFTPLogInfo("localhost", "hlavki", "dendulka13");
+        return Collections.<RemoteFileSystem>singletonList(new SFTPFileSystem(logInfo));
     }
 
     public HelpCtx getHelp() {
