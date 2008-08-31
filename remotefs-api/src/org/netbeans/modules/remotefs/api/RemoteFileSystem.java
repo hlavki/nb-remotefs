@@ -62,6 +62,8 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         RemoteFile.Notify, RemoteFile.RequestProcessor {
 
     static final long serialVersionUID = 5562503683369874863L;
+    private static final String DEFAULT_START_DIR = "/";
+    private static final String DEFAULT_SEPARATOR = "/";
     private static final boolean DEBUG = true;
     /** remote client */
     protected transient RemoteClient client;
@@ -70,7 +72,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** Root of cache directory */
     protected File cacheDir = null;
     /** Server start directory */
-    protected String startDir = "/";
+    protected String startDir = DEFAULT_START_DIR;
+    /** path separator */
+    protected String separator = DEFAULT_SEPARATOR;
     /** Login information */
     protected LogInfo logInfo;
     /** is read only */
@@ -161,7 +165,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                     rootFile = root.find(startDir);
                     if (rootFile == null) {
                         startdirNotFound(startDir, logInfo.displayName());
-                        startDir = "/";
+                        startDir = DEFAULT_START_DIR;
                         rootFile = root;
                     }
                 }
@@ -171,7 +175,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                 }
                 errorConnect(e.toString());
             }
-            synchronize("/");
+            synchronize(startDir);
         }
         fireFileStatusChanged(new FileStatusEvent(this, getRoot(), true, true));
         //refreshRoot();
@@ -239,13 +243,13 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws java.io.IOException 
      */
     protected RemoteFile getRemoteFile(String name) throws IOException {
-        RemoteFile ftpfile = rootFile.find(name);
+        RemoteFile remoteFile = rootFile.find(name);
         // hack: if attributes file is not found, create new
-        if (ftpfile == null && (name.endsWith(DefaultAttributes.ATTR_NAME_EXT) || name.endsWith(".nbattrs"))) {
+        if (remoteFile == null && (name.endsWith(DefaultAttributes.ATTR_NAME_EXT) || name.endsWith(".nbattrs"))) {
             createData(name);
-            ftpfile = rootFile.find(name);
+            remoteFile = rootFile.find(name);
         }
-        return ftpfile;
+        return remoteFile;
     }
 
     /** Synchronize specified directory
@@ -329,23 +333,26 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @return
      */
     public String[] children(String name) {
-        //System.out.println("*** FTPFileSystem.children: name="+name);
-        String[] seznam = new String[0];
+        System.out.println("*** RemoteFileSystem.children: name="+name);
+        String[] result = new String[0];
         if (!isReady()) {
-            return seznam;
+            return result;
         }
         try {
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
                 if (f.isDirectory()) {
-                    seznam = f.getStringChildren();
+                    result = f.getStringChildren();
                 }
             }
-        //else System.out.println("FTPFileSystem.children: ftpfile "+name+" NOT FOUND");
+        else System.out.println("RemoteFileSystem.children: file "+name+" NOT FOUND");
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
         }
-        return seznam;
+        for (String children : result) {
+            System.out.println("Children for " + name + " is " + children);
+        }
+        return result;
     }
 
     //
@@ -361,7 +368,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         isReadyToModify();
         RemoteFile f = null;
         String relname = null;
-        int lastslash = name.lastIndexOf("/");
+        int lastslash = name.lastIndexOf(separator);
         if (lastslash == -1) {
             relname = name;
             f = rootFile;
@@ -384,7 +391,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         isReadyToModify();
         RemoteFile f = null;
         String relname = null;
-        int lastslash = name.lastIndexOf("/");
+        int lastslash = name.lastIndexOf(separator);
         if (lastslash == -1) {
             relname = name;
             f = rootFile;
@@ -410,14 +417,14 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         if (of != null) {
             String name = null;
             String oname = oldName, nname = newName;
-            if (!oldName.startsWith("/")) {
-                oname = "/" + oldName;
+            if (!oldName.startsWith(startDir)) {
+                oname = startDir + oldName;
             }
-            if (!newName.startsWith("/")) {
-                nname = "/" + newName;
+            if (!newName.startsWith(startDir)) {
+                nname = startDir + newName;
             }
-            int slash1 = oname.lastIndexOf('/');
-            int slash2 = nname.lastIndexOf('/');
+            int slash1 = oname.lastIndexOf(separator);
+            int slash2 = nname.lastIndexOf(separator);
             if (slash1 != slash2 || !oname.substring(0, slash1).equals(nname.substring(0, slash2))) {
                 IOException e = new IOException("Can't rename !!!!!!");
                 e.printStackTrace();
@@ -567,7 +574,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             }
         //else System.out.println("FTPFileSystem.inputStream: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
-            throw new FileNotFoundException(e.toString());
+            throw new FileNotFoundException(e.toString() + " NAME: " + name);
         }
         return is;
     }

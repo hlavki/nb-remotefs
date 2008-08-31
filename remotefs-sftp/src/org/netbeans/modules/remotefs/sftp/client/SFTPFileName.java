@@ -4,6 +4,7 @@
  */
 package org.netbeans.modules.remotefs.sftp.client;
 
+import java.util.logging.Logger;
 import org.netbeans.modules.remotefs.api.RemoteFileName;
 
 /**
@@ -12,15 +13,16 @@ import org.netbeans.modules.remotefs.api.RemoteFileName;
  */
 public class SFTPFileName implements RemoteFileName {
 
-    public static final String ROOT_FOLDER = ".";
+    private static final Logger log = Logger.getLogger(SFTPFileName.class.getName());
+    public static final String ROOT_FOLDER = "data/home/astar";
     public static final String EMPTY_NAME = "";
     private String name;
     private String directory;
 
-    public SFTPFileName(String name, String directory) {
-        this.name = name;
+    public SFTPFileName(String directory, String name) {
         this.directory = directory;
-    }
+         this.name = name;
+   }
 
     public SFTPFileName(String directory) {
         this(null, directory);
@@ -37,7 +39,13 @@ public class SFTPFileName implements RemoteFileName {
     /** Get full name (with whole path).
      * @return  full name*/
     public String getFullName() {
-        return directory + "/" + name; //("".equals(name) ? "" : "/" + name);
+//        return directory + "/" + name; //("".equals(name) ? "" : "/" + name);
+//        String path = directory + (ROOT_FOLDER.equals(directory) ? "" : "/") + name;
+        String path = (directory.equals("/") ? "" : directory) + (name.equals("/") ? "" : "/") + name;
+//        String path = (directory.equals("/") ? "" : directory) + (name.equals("/") ? "" : "/") + name;
+//        String path = directory + name;
+//        String path = (directory.equals(ROOT_FOLDER) ? "" : directory) + (name.equals("/") ? "" : "/") + name;
+        return path;
 //        return (directory.equals(".")?"":directory) + (name.equals("/")?"":"/")  +name;
 //        return (ROOT_FOLDER.equals(directory) ? "" : directory) +
 //                (ROOT_FOLDER.equals(name) ? "" : ROOT_FOLDER) + name;
@@ -59,6 +67,11 @@ public class SFTPFileName implements RemoteFileName {
     /** Get root
      * @return root */
     public static RemoteFileName getRoot() {
-        return new SFTPFileName(EMPTY_NAME, ROOT_FOLDER);
+        return new SFTPFileName("", ROOT_FOLDER);
+    }
+
+    @Override
+    public String toString() {
+        return "[ DIR:" + getDirectory() + " FILE: " + getName() + " ]";
     }
 }

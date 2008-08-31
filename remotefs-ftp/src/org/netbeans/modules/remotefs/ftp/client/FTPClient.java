@@ -69,14 +69,13 @@ import org.netbeans.modules.remotefs.api.RemoteFileName;
  */
 public class FTPClient implements RemoteClient {
 
+    private static final Logger log = Logger.getLogger(FTPClient.class.getName());
     /** An empty array of File attributes. */
     private static final FTPFileAttributes[] EMPTY_LIST = new FTPFileAttributes[0];
     /** Control connection stream */
     private BufferedReader in;
     /** Control connection stream */
     private PrintWriter out;
-    /** Log stream */
-    private PrintWriter log = null;
     /** Socket */
     private Socket socket;
     /** Server socket for data connection */
@@ -161,7 +160,7 @@ public class FTPClient implements RemoteClient {
     }
 
 
-   //***************************************************************************
+    //***************************************************************************
     /** Whether passive mode is set.
      * @return Value of property passiveMode.
      */
@@ -191,7 +190,8 @@ public class FTPClient implements RemoteClient {
      */
     protected void setResponse() throws IOException {
         response = new FTPResponse(in);
-        response.writeLog(log);
+    // FIXME: overit!
+//        response.writeLog(log);
     }
 
     //***************************************************************************
@@ -254,9 +254,9 @@ public class FTPClient implements RemoteClient {
         out.println(command);
         out.flush();
         if (command.toLowerCase().startsWith("pass")) {
-            Logger.getLogger(this.getClass().getName()).log(Level.FINE,"PASS *****");
+            Logger.getLogger(this.getClass().getName()).log(Level.FINE, "PASS *****");
         } else {
-            Logger.getLogger(this.getClass().getName()).log(Level.FINE,command);
+            Logger.getLogger(this.getClass().getName()).log(Level.FINE, command);
         }
         // read response
         setResponse();
@@ -707,7 +707,6 @@ public class FTPClient implements RemoteClient {
      */
     @Deprecated
     public void addParser(ListParser parser) {
-        
     }
 
     /** Add list parser for specified type
@@ -716,7 +715,6 @@ public class FTPClient implements RemoteClient {
      */
     @Deprecated
     public void addParser(String type, ListParser parser) {
-        
     }
 
     /** Remove list parser
@@ -745,6 +743,7 @@ public class FTPClient implements RemoteClient {
         if (!isConnected()) {
             return new RemoteFileAttributes[0];
         }
+        log.info("Listing directory " + directory.getFullName());
         while (count++ < 2) {
             try {
                 Socket datasocket = openData(directory == null ? "LIST" : "LIST " + ((FTPFileName) directory).getFullName());
@@ -772,7 +771,9 @@ public class FTPClient implements RemoteClient {
             }
         }
         StringTokenizer stoken = new StringTokenizer(sbuffer.toString(), "\r\n");
-        return parseList(stoken, ((FTPFileName) directory).getFullName());
+        RemoteFileAttributes[] result = parseList(stoken, ((FTPFileName) directory).getFullName());
+        log.info("Returning " + result.length + " files...");
+        return result;
     }
 
     //***************************************************************************
@@ -902,10 +903,11 @@ public class FTPClient implements RemoteClient {
         } catch (IOException e) {
         }
     }
-/* ###########################################################################   
+    /* ###########################################################################
     DEPRECATED METHODS
-  ########################################################################### */
- //***************************************************************************
+    ########################################################################### */
+    //***************************************************************************
+
     /** Sets Log to PrintWriter
      * @deprecated : Java Logger is used instead
      * @param log
@@ -913,7 +915,6 @@ public class FTPClient implements RemoteClient {
      */
     @Deprecated
     public void setLog(PrintWriter log) {
-       
     }
 
     //***************************************************************************
@@ -923,7 +924,6 @@ public class FTPClient implements RemoteClient {
      */
     @Deprecated
     public void setLog(OutputStream log) {
-        
     }
 
     //***************************************************************************
@@ -934,8 +934,5 @@ public class FTPClient implements RemoteClient {
      */
     @Deprecated
     public void setLog(File logfile) throws IOException {
-       
     }
-
- 
 }

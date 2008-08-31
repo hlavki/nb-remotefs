@@ -39,7 +39,6 @@
  *
  * Contributor(s): Libor Martinek.
  */
-
 package org.netbeans.modules.remotefs.ftp.client;
 
 import org.netbeans.modules.remotefs.api.RemoteFileName;
@@ -67,36 +66,37 @@ public class FTPFileName implements RemoteFileName {
     public String getName() {
         return name;
     }
-    
+
     /** Set new name. Used for renaming. Only name is chnaged, path remains.
      * @param newname  new name */
     public void setName(String newname) {
         name = newname;
     }
-    
+
     /** Get full name (with whole path).
      * @return  full name*/
     public String getFullName() {
-        return (directory.equals("/")?"":directory) + (name.equals("/")?"":"/")  +name;
+        String path = (directory.equals("/") ? "" : directory) + (name.equals("/") ? "" : "/") + name;
+        System.out.println("Full name: " + path);
+        return path;
     }
-    
+
     /** Get directory of this filename
-     * @return directory of this filename */    
+     * @return directory of this filename */
     protected String getDirectory() {
-        return directory;   
+        return directory;
     }
 
     /** Create new name object under this name object.
      * @param name name of new name object
-     * @return created name object */ 
-    public RemoteFileName createNew(String name) { 
-        return new FTPFileName(getFullName(),name);
+     * @return created name object */
+    public RemoteFileName createNew(String name) {
+        return new FTPFileName(getFullName(), name);
     }
-    
+
     /** Get root
-     * @return root */    
+     * @return root */
     public static RemoteFileName getRoot() {
-        return new FTPFileName("","/");
+        return new FTPFileName("", "/");
     }
-    
 }

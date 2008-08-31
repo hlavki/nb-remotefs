@@ -86,8 +86,8 @@ public class RemoteFile {
     private static final int CHANGED = 3;
     private boolean onserver;
     private long cachelastmodified;
-    private boolean childrenchanged = false;
-    private boolean nextnochildren = false;
+    private boolean childrenChanged = false;
+    private boolean nextNoChildren = false;
 
     //***************************************************************************
     /** Creates new RemoteFile
@@ -261,9 +261,9 @@ public class RemoteFile {
      * @return array of children
      */
     public synchronized RemoteFile[] getChildren() {
-        childrenchanged = false;
-        if (nextnochildren) {
-            nextnochildren = false;
+        childrenChanged = false;
+        if (nextNoChildren) {
+            nextNoChildren = false;
             return children;
         }
         rp.post(new Runnable() {
@@ -274,8 +274,8 @@ public class RemoteFile {
                 } catch (IOException e) {
                     notify.notifyException(e);
                 }
-                if (childrenchanged) {
-                    nextnochildren = true;
+                if (childrenChanged) {
+                    nextNoChildren = true;
                     notify.fileChanged(getName().getFullName());
                 }
             }
@@ -358,7 +358,7 @@ public class RemoteFile {
                     String name = (String) (it.next());
                     RemoteFileAttributes at = new RemoteFileAttributes(getName().createNew(name), new File(file, name).isDirectory());
                     childrenList.add(new RemoteFile(at, this, client, notify, rp, new File(file, name), false));
-                    childrenchanged = true;
+                    childrenChanged = true;
                 }
             }
         }
@@ -379,7 +379,7 @@ public class RemoteFile {
                 while (it.hasNext()) {
                     RemoteFileAttributes at = serverMap.get(it.next());
                     childrenList.add(new RemoteFile(at, this, client, notify, rp, new File(file, at.getName().getName()), true));
-                    childrenchanged = true;
+                    childrenChanged = true;
                 }
 
                 // construct set 1+3
@@ -832,20 +832,21 @@ public class RemoteFile {
      */
     public RemoteFile find(String name) throws IOException {
         //System.out.println("RemoteFile.find: path="+getPath()+"  name="+name);
-        RemoteFile RemoteFile = this, newfile;
+        RemoteFile remoteFile = this, newfile;
+        if (name.equals(".")) return remoteFile;
         StringTokenizer st = new StringTokenizer(name, "/");
         while (st.hasMoreTokens()) {
             String next = st.nextToken();
-            newfile = RemoteFile.getExistingChild(next);
+            newfile = remoteFile.getExistingChild(next);
             if (newfile == null) {
-                newfile = RemoteFile.getChild(next);
+                newfile = remoteFile.getChild(next);
             }
-            RemoteFile = newfile;
-            if (RemoteFile == null) {
+            remoteFile = newfile;
+            if (remoteFile == null) {
                 break;
             }
         }
-        return RemoteFile;
+        return remoteFile;
     }
 
     //***************************************************************************
@@ -1023,7 +1024,7 @@ public class RemoteFile {
                 }
             }
             children = new RemoteFile[0];
-            childrenchanged = true;
+            childrenChanged = true;
             childrenList.clear();
             if (onserver && client.isConnected()) {
                 client.rmdir(getName());
@@ -1053,7 +1054,7 @@ public class RemoteFile {
     protected void deleteChild(RemoteFile child) {
         childrenList.remove(child);
         children = childrenList.toArray(children);
-        childrenchanged = true;
+        childrenChanged = true;
     }
 
     //***************************************************************************
@@ -1116,7 +1117,7 @@ public class RemoteFile {
     private RemoteFile createFile(RemoteFileAttributes a, boolean onserver) throws IOException {
         RemoteFile newfile = new RemoteFile(a, this, client, notify, rp, new File(file, a.getName().getName()), onserver);
         childrenList.add(newfile);
-        childrenchanged = true;
+        childrenChanged = true;
         children = childrenList.toArray(children);
         return newfile;
     }

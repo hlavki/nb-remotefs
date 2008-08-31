@@ -166,7 +166,8 @@ public final class RemoteFileSystemManager implements FileChangeListener {
         refreshFs.cancel();
         refreshFs.schedule(50);
     }
-    private final RequestProcessor.Task refreshFs = new RequestProcessor(RemoteFileSystemManager.class.getName()).create(new Runnable() {
+    private final RequestProcessor.Task refreshFs =
+            new RequestProcessor(RemoteFileSystemManager.class.getName()).create(new Runnable() {
 
         public void run() {
             doInit();

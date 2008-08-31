@@ -39,18 +39,16 @@
  *
  * Contributor(s): Libor Martinek.
  */
-
 package org.netbeans.modules.remotefs.api;
 
 import java.util.Date;
-
 
 /** Remote File attributes. Class for storing attributes for files from remote server.
  *
  * @author  Libor Martinek
  * @version 1.0
  */
-public class RemoteFileAttributes   {
+public class RemoteFileAttributes {
 
     private RemoteFileName name = null;
     private boolean isdirectory = true;
@@ -63,53 +61,75 @@ public class RemoteFileAttributes   {
      * @param size size of file
      * @param date last modification date */
     public RemoteFileAttributes(RemoteFileName name, boolean isdirectory, long size, java.util.Date date) {
-        this.name=name;
-        this.isdirectory=isdirectory;
-        this.size=size;
-        this.date=date;
+        this.name = name;
+        this.isdirectory = isdirectory;
+        this.size = size;
+        this.date = date;
     }
-   
+
     /** Creates empty RemoteFileAttributes */
     public RemoteFileAttributes() {
     }
-    
+
     /** Creates RemoteFileAttributes specified with name and isdirectory flag
      * @param name name
      * @param isdirectory whether it's directory */
     public RemoteFileAttributes(RemoteFileName name, boolean isdirectory) {
-    	this.name = name;
+        this.name = name;
         this.isdirectory = isdirectory;
-    }	
-    
+    }
+
     /** Set name of file
      * @param name name */
-    public void setName(RemoteFileName name) { this.name=name;  }
-    
+    public void setName(RemoteFileName name) {
+        this.name = name;
+    }
+
     /** Set whether it is directory
      * @param dir true if it's directory */
-    public void setIsDirectory(boolean dir) {  this.isdirectory=dir;   }
-    
+    public void setIsDirectory(boolean dir) {
+        this.isdirectory = dir;
+    }
+
     /** Set size of file
      * @param size size of file */
-    public void setSize(long size) {  this.size=size;}
-    
+    public void setSize(long size) {
+        this.size = size;
+    }
+
     /** Set date of last modification
      * @param date set last modification date */
-    public void setDate(Date date) {  this.date=date; }
-    
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
     /** Tet name of file
      * @return  name*/
-    public RemoteFileName getName() { return name; }
-    
+    public RemoteFileName getName() {
+        return name;
+    }
+
     /** Test whether it is directory
-      * @return true if it is directory */
-    public boolean isDirectory() { return isdirectory; }
-    
+     * @return true if it is directory */
+    public boolean isDirectory() {
+        return isdirectory;
+    }
+
     /** Get size of file
      * @return  size*/
-    public long getSize() { return size; }
- 
+    public long getSize() {
+        return size;
+    }
+
     /** Get date of last modification
      * @return  last modification date*/
-    public Date getDate() { return date; }
+    public Date getDate() {
+        return date;
+    }
+
+    @Override
+    public String toString() {
+        return "[ FILE: " + getName() + " IS_DIR: " + isDirectory() + " SIZE: " + getSize() + " DATE: " + getDate() + " ]";
+    }
+
 }
