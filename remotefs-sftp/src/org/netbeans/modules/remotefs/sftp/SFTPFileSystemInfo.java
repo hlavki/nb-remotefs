@@ -33,7 +33,7 @@ public class SFTPFileSystemInfo implements RemoteFileSystemInfo {
     }
 
     public List<RemoteFileSystem> getConnections() {
-        SFTPLogInfo logInfo = new SFTPLogInfo("localhost", "hlavki", "dendulka13");
+        SFTPLogInfo logInfo = new SFTPLogInfo("localhost", "astar", "pleja");
         return Collections.<RemoteFileSystem>singletonList(new SFTPFileSystem(logInfo));
     }
 

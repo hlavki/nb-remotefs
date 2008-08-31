@@ -1,3 +1,5 @@
+build/
+private/
 \.orig$
 \.orig\..*$
 \.chg\..*$

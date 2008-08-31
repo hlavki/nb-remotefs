@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
+import org.netbeans.modules.remotefs.ftp.client.FTPLogInfo;
 import org.netbeans.modules.remotefs.ftp.resources.Bundle;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
@@ -32,7 +33,8 @@ public class FTPFileSystemInfo implements RemoteFileSystemInfo {
     }
 
     public List<RemoteFileSystem> getConnections() {
-        return Collections.<RemoteFileSystem>singletonList(new FTPFileSystem());
+        FTPLogInfo logInfo = new FTPLogInfo("localhost", 2121, "admin", "admin");
+        return Collections.<RemoteFileSystem>singletonList(new FTPFileSystem(logInfo));
     }
 
     public HelpCtx getHelp() {

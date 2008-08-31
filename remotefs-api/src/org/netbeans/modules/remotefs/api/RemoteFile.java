@@ -113,77 +113,77 @@ public class RemoteFile {
         //System.out.println("RemoteFile.RemoteFile: name="+attrib.getName()+" dir="+attrib.isDirectory()+" cache="+file.getPath());
 
         // Directory of File?
-//        if (attrib.isDirectory()) {
-//            status = NOT_CACHED;
-//            if (client.isConnected()) {
-//                if (!onserver) {
-//                    // directory doesn't exist on server. Create new.
-//                    client.mkdir(getName());
-//                //System.out.println("RemoteFile: creating dir "+getPath()+" on server");
-//                }
-//                // TODO: better upload dir to server, using goOnline
-//                // upload  contents of directory to server.
-//                // onserver is false so no unneeded list from server will be retrieved.
-//            /*String list[] = file.list();
-//                if (file.exists() && list != null && list.length > 0)
-//                getChildren();
-//                 */
-//                this.onserver = true;
-//            }
-//            if (!file.exists()) {
-//                // directory doesn't exist in cache. Create new.
-//                file.mkdirs();
-//                //System.out.println("RemoteFile: creating dir "+file.getPath()+" in cache");
-//                if (!onserver) // New created directory doesn't contain children
-//                {
-//                    status = CACHED;
-//                } else // Directory exist on server but isn't cached
-//                {
-//                    status = NOT_CACHED;
-//                }
-//            }
-//        } // File
-//        else {
-//            if (!file.exists()) { // if file doesn't exist in cache..
-//                if (onserver) {
-//                    status = NOT_CACHED;
-//                } // ..but exists on server
-//                else {
-//                    status = CACHED;
-//                } // ..and also doesn't exist on server
-//                cachelastmodified = file.lastModified();
-//            } else {  // file exist in cache
-//                status = CACHED;
-//                cachelastmodified = file.lastModified();
-//                int which;
-//                if (!onserver) {
-//                    which = 0;
-//                } // file on server doesn't exist yet
-//                else {
-//                    if ((attrib.getSize() == 0 && file.length() == 0) ||
-//                            (attrib.getSize() == file.length() && attrib.getDate().getTime() == file.lastModified())) {
-//                        which = -1;
-//                    } // both files are equal
-//                    else {
-//                        which = notify.notifyWhichFile(getName().getFullName(), attrib.getDate(), attrib.getSize(), new Date(file.lastModified()),
-//                                file.length());
-//                    }
-//                }
-//                if (which == 0) {  // file in cache is the right one
-//                    status = CHANGED;
-//                    cachelastmodified = file.lastModified();
-//                    save();
-//                //System.out.println("RemoteFile: saving "+getPath()+" to server");
-//                } else if (which == 1) {  // file on server is the right one
-//                    file.delete();
-//                    status = NOT_CACHED;
-//                    if (notify.isDownloadServerChangedFile()) {
-//                        load();
-//                    //System.out.println("RemoteFile: loading "+getPath()+" from server");
-//                    }
-//                }
-//            }
-//        }
+        if (attrib.isDirectory()) {
+            status = NOT_CACHED;
+            if (client.isConnected()) {
+                if (!onserver) {
+                    // directory doesn't exist on server. Create new.
+                    client.mkdir(getName());
+                //System.out.println("RemoteFile: creating dir "+getPath()+" on server");
+                }
+                // TODO: better upload dir to server, using goOnline
+                // upload  contents of directory to server.
+                // onserver is false so no unneeded list from server will be retrieved.
+            /*String list[] = file.list();
+                if (file.exists() && list != null && list.length > 0)
+                getChildren();
+                 */
+                this.onserver = true;
+            }
+            if (!file.exists()) {
+                // directory doesn't exist in cache. Create new.
+                file.mkdirs();
+                //System.out.println("RemoteFile: creating dir "+file.getPath()+" in cache");
+                if (!onserver) // New created directory doesn't contain children
+                {
+                    status = CACHED;
+                } else // Directory exist on server but isn't cached
+                {
+                    status = NOT_CACHED;
+                }
+            }
+        } // File
+        else {
+            if (!file.exists()) { // if file doesn't exist in cache..
+                if (onserver) {
+                    status = NOT_CACHED;
+                } // ..but exists on server
+                else {
+                    status = CACHED;
+                } // ..and also doesn't exist on server
+                cachelastmodified = file.lastModified();
+            } else {  // file exist in cache
+                status = CACHED;
+                cachelastmodified = file.lastModified();
+                int which;
+                if (!onserver) {
+                    which = 0;
+                } // file on server doesn't exist yet
+                else {
+                    if ((attrib.getSize() == 0 && file.length() == 0) ||
+                            (attrib.getSize() == file.length() && attrib.getDate().getTime() == file.lastModified())) {
+                        which = -1;
+                    } // both files are equal
+                    else {
+                        which = notify.notifyWhichFile(getName().getFullName(), attrib.getDate(), attrib.getSize(), new Date(file.lastModified()),
+                                file.length());
+                    }
+                }
+                if (which == 0) {  // file in cache is the right one
+                    status = CHANGED;
+                    cachelastmodified = file.lastModified();
+                    save();
+                //System.out.println("RemoteFile: saving "+getPath()+" to server");
+                } else if (which == 1) {  // file on server is the right one
+                    file.delete();
+                    status = NOT_CACHED;
+                    if (notify.isDownloadServerChangedFile()) {
+                        load();
+                    //System.out.println("RemoteFile: loading "+getPath()+" from server");
+                    }
+                }
+            }
+        }
     }
 
     //***************************************************************************

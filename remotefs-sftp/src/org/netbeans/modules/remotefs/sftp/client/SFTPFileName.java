@@ -37,8 +37,10 @@ public class SFTPFileName implements RemoteFileName {
     /** Get full name (with whole path).
      * @return  full name*/
     public String getFullName() {
-        return (ROOT_FOLDER.equals(directory) ? "" : directory) +
-                (ROOT_FOLDER.equals(name) ? "" : ROOT_FOLDER) + name;
+        return directory + "/" + name; //("".equals(name) ? "" : "/" + name);
+//        return (directory.equals(".")?"":directory) + (name.equals("/")?"":"/")  +name;
+//        return (ROOT_FOLDER.equals(directory) ? "" : directory) +
+//                (ROOT_FOLDER.equals(name) ? "" : ROOT_FOLDER) + name;
     }
 
     /** Get directory of this filename
