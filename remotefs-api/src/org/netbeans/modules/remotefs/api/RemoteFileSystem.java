@@ -333,7 +333,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @return
      */
     public String[] children(String name) {
-        System.out.println("*** RemoteFileSystem.children: name="+name);
+//        System.out.println("*** RemoteFileSystem.children: name="+name);
         String[] result = new String[0];
         if (!isReady()) {
             return result;
@@ -345,12 +345,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                     result = f.getStringChildren();
                 }
             }
-        else System.out.println("RemoteFileSystem.children: file "+name+" NOT FOUND");
+//        else System.out.println("RemoteFileSystem.children: file "+name+" NOT FOUND");
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
-        }
-        for (String children : result) {
-            System.out.println("Children for " + name + " is " + children);
         }
         return result;
     }

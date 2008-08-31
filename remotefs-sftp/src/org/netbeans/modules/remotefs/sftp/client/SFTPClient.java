@@ -84,7 +84,7 @@ public class SFTPClient implements RemoteClient {
     public synchronized void get(RemoteFileName what, File where) throws IOException {
         OutputStream fileOut = null;
         InputStream dataIn = null;
-        log.info("Recieving data from " + what.getFullName() + " to " + where.getAbsolutePath());
+        log.fine("Recieving data from " + what.getFullName() + " to " + where.getAbsolutePath());
         try {
             fileOut = new FileOutputStream(where);
             dataIn = channel.get(what.getFullName(), new SFTPProgressHandle());
@@ -111,7 +111,7 @@ public class SFTPClient implements RemoteClient {
                 }
             }
         }
-        log.info("Stop recieving data...");
+        log.fine("Stop recieving data...");
     }
 
     /**
@@ -120,7 +120,7 @@ public class SFTPClient implements RemoteClient {
     public synchronized void put(File what, RemoteFileName where) throws IOException {
         InputStream inData = null;
         OutputStream fileOut = null;
-        log.info("Sending data from " + what.getAbsolutePath() + " to " + where.getFullName());
+        log.fine("Sending data from " + what.getAbsolutePath() + " to " + where.getFullName());
         try {
             inData = new FileInputStream(what);
             fileOut = channel.put(where.getFullName(), new SFTPProgressHandle(), ChannelSftp.OVERWRITE);
@@ -155,7 +155,7 @@ public class SFTPClient implements RemoteClient {
     public synchronized RemoteFileAttributes[] list(RemoteFileName directory) throws IOException {
         Map<String, RemoteFileAttributes> dirList = new HashMap<String, RemoteFileAttributes>();
         try {
-            log.info("Listing directory " + directory.getFullName());
+            log.fine("Listing directory " + directory.getFullName());
             Vector entries = channel.ls(directory.getFullName());
             for (int idx = 0; idx < entries.size(); idx++) {
                 ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) entries.get(idx);
@@ -178,12 +178,12 @@ public class SFTPClient implements RemoteClient {
                 if (!dirList.containsKey(fileName)) {
                     RemoteFileAttributes fileEntry =
                             new RemoteFileAttributes(remoteFileName, isDirectory, attrs.getSize(), mtime);
-                    log.fine("Listed file: " + fileEntry);
+                    log.finer("Listed file: " + fileEntry);
                     dirList.put(fileName, fileEntry);
                 }
             }
             RemoteFileAttributes[] result = dirList.values().toArray(new RemoteFileAttributes[0]);
-            log.info("Returning " + result.length + " files...");
+            log.fine("Returning " + result.length + " files...");
             return result;
         } catch (SftpException e) {
             throw new SFTPException(e);
@@ -197,7 +197,7 @@ public class SFTPClient implements RemoteClient {
         String pwd = null;
         Map<String, RemoteFileAttributes> dirList = new HashMap<String, RemoteFileAttributes>();
         try {
-            log.info("Listing directory " + directory.getFullName());
+            log.fine("Listing directory " + directory.getFullName());
             Vector entries = channel.ls(directory.getFullName());
             for (int idx = 0; idx < entries.size(); idx++) {
                 boolean isDirectory = false;
@@ -266,7 +266,7 @@ public class SFTPClient implements RemoteClient {
      */
     public synchronized void rename(RemoteFileName src, String newName) throws IOException {
         SFTPFileName dst = new SFTPFileName(((SFTPFileName) src).getDirectory(), newName);
-        log.info("Renaming " + src.getFullName() + " to " + dst.getFullName());
+        log.fine("Renaming " + src.getFullName() + " to " + dst.getFullName());
         try {
             channel.rename(src.getFullName(), dst.getFullName());
         } catch (SftpException e) {
@@ -279,7 +279,7 @@ public class SFTPClient implements RemoteClient {
      */
     public void delete(RemoteFileName name) throws IOException {
         try {
-            log.info("Deleting " + name.getFullName());
+            log.fine("Deleting " + name.getFullName());
             channel.rm(name.getFullName());
         } catch (SftpException e) {
             throw new SFTPException(e);
@@ -292,7 +292,7 @@ public class SFTPClient implements RemoteClient {
     public void mkdir(RemoteFileName name) throws IOException {
         try {
             String fullPath = name.getFullName();
-            log.info("Creating directory " + fullPath);
+            log.fine("Creating directory " + fullPath);
             channel.mkdir(fullPath);
         } catch (SftpException e) {
             throw new SFTPException(e);
@@ -304,7 +304,7 @@ public class SFTPClient implements RemoteClient {
      */
     public void rmdir(RemoteFileName name) throws IOException {
         try {
-            log.info("Removing directory " + name.getFullName());
+            log.fine("Removing directory " + name.getFullName());
             channel.rmdir(name.getFullName());
         } catch (SftpException e) {
             throw new SFTPException(e);
@@ -315,7 +315,7 @@ public class SFTPClient implements RemoteClient {
      * {@inheritDoc}
      */
     public synchronized void disconnect() {
-        log.info("Disconnecting channel!");
+        log.fine("Disconnecting channel!");
         session.disconnect();
     }
 
@@ -323,7 +323,7 @@ public class SFTPClient implements RemoteClient {
      * {@inheritDoc}
      */
     public synchronized void close() {
-        log.info("Closing channel!");
+        log.fine("Closing channel!");
         if (channel != null) {
             session.disconnect();
         }
