@@ -20,7 +20,7 @@ public class SFTPSettings {
     private static final boolean DEFAULT_ASK_WHICH_FILE = true;
     private static final boolean DEFAULT_REFRESH_SERVER = true;
     private static final boolean DEFAULT_SCAN_CACHE = true;
-    private static final boolean DEFAULT_ALWAYS_REFRESH = true;
+    private static final boolean DEFAULT_ALWAYS_REFRESH = false;
     private static final boolean DEFAULT_DOWNLOAD_SERVER_CHANGED_FILE = true;
     private static final boolean DEFAULT_OFFLINE_CHANGES = true;
     private static final boolean DEFAULT_ASK_SERVER_CHANGED_FILE = true;

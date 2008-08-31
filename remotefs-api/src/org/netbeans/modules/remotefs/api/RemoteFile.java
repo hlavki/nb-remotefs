@@ -470,22 +470,22 @@ public class RemoteFile {
             //getChildren();  ???
 
             // directory in cache was deleted, if doesn't exist (directory in cache must always exist)
-            boolean cachedeleted = !file.exists();
+            boolean cacheDeleted = !file.exists();
             // directory in server was deleetd if client is connected, onserver==true and at is unexpectly Epoch */
-            boolean serverdeleted = (client.isConnected() && onserver == true && at != null &&
+            boolean serverDeleted = (client.isConnected() && onserver == true && at != null &&
                     at.getDate().getTime() == 0 && at.getSize() == 0);
 
             // is dir in server was deleted, repair onserver property
-            if (serverdeleted) {
+            if (serverDeleted) {
                 onserver = false;
             }
             // if dir was delete in server and in cache, delete it item from parent
-            if (cachedeleted && serverdeleted) {
+            if (cacheDeleted && serverDeleted) {
                 parent.deleteChild(this);
                 return;
             }
             // directory deleted only in cache
-            if (cachedeleted && !serverdeleted) {
+            if (cacheDeleted && !serverDeleted) {
                 // if parent also doesnt' exist refresh it
                 if (!parent.file.exists()) {
                     //TODO: ???
@@ -503,7 +503,7 @@ public class RemoteFile {
                 }
             }
             // directory deleted only from server
-            if (!cachedeleted && serverdeleted) {
+            if (!cacheDeleted && serverDeleted) {
                 String list[] = file.list();
                 // if directory in cache is empty, delete RemoteFile
                 if (list == null || list.length == 0) {

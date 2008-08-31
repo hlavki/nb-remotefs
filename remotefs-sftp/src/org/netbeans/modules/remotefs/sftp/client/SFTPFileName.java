@@ -14,7 +14,7 @@ import org.netbeans.modules.remotefs.api.RemoteFileName;
 public class SFTPFileName implements RemoteFileName {
 
     private static final Logger log = Logger.getLogger(SFTPFileName.class.getName());
-    public static final String ROOT_FOLDER = "data/home/astar";
+    public static final String ROOT_FOLDER = "/";
     public static final String EMPTY_NAME = "";
     private String name;
     private String directory;
