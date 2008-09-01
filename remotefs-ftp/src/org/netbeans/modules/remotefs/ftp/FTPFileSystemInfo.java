@@ -40,4 +40,8 @@ public class FTPFileSystemInfo implements RemoteFileSystemInfo {
     public HelpCtx getHelp() {
         return null;
     }
+
+    public void createConnection() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

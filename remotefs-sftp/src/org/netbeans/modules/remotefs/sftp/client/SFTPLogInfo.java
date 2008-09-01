@@ -23,6 +23,7 @@ import org.netbeans.modules.remotefs.api.LogInfo;
  */
 public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Comparable<LogInfo> {
 
+    private static final String DEFAULT_PROTOCOL = "sftp";
     private static final long serialVersionUID = 1L;
     private String host;
     private int port;
@@ -31,20 +32,26 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
     private String keyFile;
     private String rootFolder;
     private JTextField passwordField;
+    private String protocol;
 
     public SFTPLogInfo() {
         this("localhost", null);
     }
 
     public SFTPLogInfo(String host, String user) {
-        this(host, SFTPClient.DEFAULT_PORT, System.getProperty("user.name"), null);
+        this(DEFAULT_PROTOCOL, host, SFTPClient.DEFAULT_PORT, user, null);
     }
 
-    public SFTPLogInfo(String host, String user, String password) {
-        this(host, SFTPClient.DEFAULT_PORT, user, password);
+    public SFTPLogInfo(String protocol, String host, String user) {
+        this(protocol, host, SFTPClient.DEFAULT_PORT, System.getProperty("user.name"), null);
     }
 
-    public SFTPLogInfo(String host, int port, String user, String password) {
+    public SFTPLogInfo(String protocol, String host, String user, String password) {
+        this(protocol, host, SFTPClient.DEFAULT_PORT, user, password);
+    }
+
+    public SFTPLogInfo(String protocol, String host, int port, String user, String password) {
+        this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.user = user;
@@ -134,7 +141,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
     }
 
     public String displayName() {
-        return "sftp://" + user + "@" + host + (port == SFTPClient.DEFAULT_PORT ? "" : ":" + String.valueOf(port));
+        return protocol + "://" + user + "@" + host + (port == SFTPClient.DEFAULT_PORT ? "" : ":" + String.valueOf(port));
     }
 
     public String getPassphrase() {
@@ -164,6 +171,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
                 JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             password = passwordField.getText();
+            System.out.println("Password is " + password);
             return true;
         } else {
             return false;
@@ -237,6 +245,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
             String[] response = new String[prompt.length];
             for (int i = 0; i < prompt.length; i++) {
                 response[i] = texts[i].getText();
+                password = texts[i].getText();
             }
             return response;
         } else {
@@ -259,5 +268,9 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
         } else {
             return -1;
         }
+    }
+
+    public String getProtocol() {
+        return protocol;
     }
 }

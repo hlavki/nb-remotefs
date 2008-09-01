@@ -39,7 +39,6 @@
  *
  * Contributor(s): Libor Martinek.
  */
-
 package org.netbeans.modules.remotefs.api;
 
 /** Interface for storing login information. Usually username, pasword, etc.
@@ -47,12 +46,12 @@ package org.netbeans.modules.remotefs.api;
  * @author  Libor Martinek
  * @version 1.0
  */
-public interface LogInfo extends java.io.Serializable{
+public interface LogInfo extends java.io.Serializable {
 
     /** Return human redable description of this LogInfo
      * @return 
      */
-  public String displayName();
+    public String displayName();
 
-
+    public String getProtocol();
 }

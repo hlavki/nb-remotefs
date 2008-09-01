@@ -51,6 +51,7 @@ import org.netbeans.modules.remotefs.api.LogInfo;
 public class FTPLogInfo implements LogInfo {
 
     static final long serialVersionUID = 4795532037339960289L;
+    private static final String DEFAULT_PROTOCOL = "ftp";
     /** Host name */
     private String host = "localhost";
     /** Port number */
@@ -61,6 +62,7 @@ public class FTPLogInfo implements LogInfo {
     private String password = "forteuser@";
     private String rootFolder = "/";
     private boolean passiveMode = false;
+    private String protocol;
 
     /** Create empty LogInfo */
     public FTPLogInfo() {
@@ -70,9 +72,21 @@ public class FTPLogInfo implements LogInfo {
      * @param host
      * @param port
      * @param user
-     * @param password 
+     * @param password
      */
     public FTPLogInfo(String host, int port, String user, String password) {
+        this(DEFAULT_PROTOCOL, host, port, user, password);
+    }
+
+    /** Create LogInfo
+     * @param protocol 
+     * @param host
+     * @param port
+     * @param user
+     * @param password 
+     */
+    public FTPLogInfo(String protocol, String host, int port, String user, String password) {
+        this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.user = user;
@@ -145,7 +159,7 @@ public class FTPLogInfo implements LogInfo {
 
     /** Return human redable description of this LogInfo */
     public String displayName() {
-        return "ftp://" + ((user != null && user.equalsIgnoreCase("anonymous")) ? "" : user + "@") +
+        return protocol + "://" + ((user != null && user.equalsIgnoreCase("anonymous")) ? "" : user + "@") +
                 host + ((port == FTPClient.DEFAULT_PORT) ? "" : (":" + String.valueOf(port)));
     }
 
@@ -155,5 +169,9 @@ public class FTPLogInfo implements LogInfo {
 
     public void setRootFolder(String rootFolder) {
         this.rootFolder = rootFolder;
+    }
+
+    public String getProtocol() {
+        return protocol;
     }
 }

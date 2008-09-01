@@ -153,47 +153,6 @@ public class SFTPClient implements RemoteClient {
      * {@inheritDoc}
      */
     public synchronized RemoteFileAttributes[] list(RemoteFileName directory) throws IOException {
-        Map<String, RemoteFileAttributes> dirList = new HashMap<String, RemoteFileAttributes>();
-        try {
-            log.fine("Listing directory " + directory.getFullName());
-            Vector entries = channel.ls(directory.getFullName());
-            for (int idx = 0; idx < entries.size(); idx++) {
-                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) entries.get(idx);
-                SftpATTRS attrs = entry.getAttrs();
-                String fileName = entry.getFilename();
-                if (fileName.equals(".") || fileName.equals("..")) {
-                    continue;
-                }
-                if (fileName.length() > 2 && fileName.startsWith(".")) {
-                    // hide hidden files
-                    continue;
-                }
-                if (attrs.isLink()) {
-                    // hide links
-                    continue;
-                }
-                RemoteFileName remoteFileName = new SFTPFileName(directory.getFullName(), entry.getFilename());
-                boolean isDirectory = attrs.isDir();
-                Date mtime = new Date(attrs.getMTime() * (long) 1000);
-                if (!dirList.containsKey(fileName)) {
-                    RemoteFileAttributes fileEntry =
-                            new RemoteFileAttributes(remoteFileName, isDirectory, attrs.getSize(), mtime);
-                    log.finer("Listed file: " + fileEntry);
-                    dirList.put(fileName, fileEntry);
-                }
-            }
-            RemoteFileAttributes[] result = dirList.values().toArray(new RemoteFileAttributes[0]);
-            log.fine("Returning " + result.length + " files...");
-            return result;
-        } catch (SftpException e) {
-            throw new SFTPException(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public synchronized RemoteFileAttributes[] list2(RemoteFileName directory) throws IOException {
         String pwd = null;
         Map<String, RemoteFileAttributes> dirList = new HashMap<String, RemoteFileAttributes>();
         try {
@@ -243,7 +202,7 @@ public class SFTPClient implements RemoteClient {
                     fileEntry = new RemoteFileAttributes(remoteFile, isDirectory, attrs.getSize(), mtime);
                 }
                 if (!dirList.containsKey(fileName)) {
-                    System.out.println("Listed file: " + fileEntry);
+                    log.finer("Listed file: " + fileEntry);
                     dirList.put(fileName, fileEntry);
                 }
             }

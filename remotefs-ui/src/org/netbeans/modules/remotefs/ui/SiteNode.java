@@ -59,10 +59,10 @@ public class SiteNode extends FilterNode {
         return getIcon(type);
     }
 
-    @Override
-    public String getHtmlDisplayName() {
-        return "<b><font color=\"00AA00\">" + getName() + "</font></b>";
-    }
+//    @Override
+//    public String getHtmlDisplayName() {
+//        return "<b><font color=\"00AA00\">" + getName() + "</font></b>";
+//    }
 
     @Override
     public String getDisplayName() {
@@ -168,7 +168,7 @@ public class SiteNode extends FilterNode {
             props[2].setName("Password");
             props[3] = new PropertySupport.Reflection<Integer>(site, int.class, "port");
             props[3].setName("Port");
-            props[4] = new PropertySupport.Reflection<String>(site, String.class, "startdir");
+            props[4] = new PropertySupport.Reflection<String>(site, String.class, "startDir");
             props[4].setName("Root folder");
 //            Property prop6 = new PropertySupport.Reflection(site, File.class, "cache");
 //            prop6.setName("cache folder");
@@ -180,6 +180,7 @@ public class SiteNode extends FilterNode {
 
     @Override
     public Node.PropertySet[] getPropertySets() {
+        System.out.println("GETING PROPERTIES");
         Sheet.Set props = new Sheet.Set();
         props.setName("Basic Properties");
         props.put(getProperties());

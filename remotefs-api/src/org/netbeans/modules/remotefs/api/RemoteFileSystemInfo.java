@@ -21,4 +21,6 @@ public interface RemoteFileSystemInfo {
     List<RemoteFileSystem> getConnections();
 
     HelpCtx getHelp();
+
+    void createConnection();
 }

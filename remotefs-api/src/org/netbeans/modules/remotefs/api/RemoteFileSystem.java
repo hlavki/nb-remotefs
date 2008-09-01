@@ -64,7 +64,6 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
 
     private static final String DEFAULT_START_DIR = "/";
     private static final String DEFAULT_SEPARATOR = "/";
-    private static final boolean DEBUG = true;
     /** remote client */
     protected transient RemoteClient client;
     /** root file */
@@ -245,10 +244,11 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     protected RemoteFile getRemoteFile(String name) throws IOException {
         RemoteFile remoteFile = rootFile.find(name);
         // hack: if attributes file is not found, create new
-        if (remoteFile == null && (name.endsWith(DefaultAttributes.ATTR_NAME_EXT) || name.endsWith(".nbattrs"))) {
-            createData(name);
-            remoteFile = rootFile.find(name);
-        }
+        // TODO: is this really neccessary?
+//        if (remoteFile == null && (name.endsWith(DefaultAttributes.ATTR_NAME_EXT) || name.endsWith(".nbattrs"))) {
+//            createData(name);
+//            remoteFile = rootFile.find(name);
+//        }
         return remoteFile;
     }
 
