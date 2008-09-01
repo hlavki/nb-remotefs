@@ -39,16 +39,7 @@ public class SFTPFileName implements RemoteFileName {
     /** Get full name (with whole path).
      * @return  full name*/
     public String getFullName() {
-//        return directory + "/" + name; //("".equals(name) ? "" : "/" + name);
-//        String path = directory + (ROOT_FOLDER.equals(directory) ? "" : "/") + name;
-        String path = (directory.equals("/") ? "" : directory) + (name.equals("/") ? "" : "/") + name;
-//        String path = (directory.equals("/") ? "" : directory) + (name.equals("/") ? "" : "/") + name;
-//        String path = directory + name;
-//        String path = (directory.equals(ROOT_FOLDER) ? "" : directory) + (name.equals("/") ? "" : "/") + name;
-        return path;
-//        return (directory.equals(".")?"":directory) + (name.equals("/")?"":"/")  +name;
-//        return (ROOT_FOLDER.equals(directory) ? "" : directory) +
-//                (ROOT_FOLDER.equals(name) ? "" : ROOT_FOLDER) + name;
+        return directory + (ROOT_FOLDER.equals(directory) ? "" : "/") + name;
     }
 
     /** Get directory of this filename
@@ -67,7 +58,7 @@ public class SFTPFileName implements RemoteFileName {
     /** Get root
      * @return root */
     public static RemoteFileName getRoot() {
-        return new SFTPFileName("", ROOT_FOLDER);
+        return new SFTPFileName(ROOT_FOLDER, "");
     }
 
     @Override

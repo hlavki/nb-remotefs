@@ -62,6 +62,7 @@ public class RemoteOutputStream extends java.io.FileOutputStream {
      /** Close the stream and notify FTPFile.
      * @throws IOException
      */
+    @Override
     public void close() throws java.io.IOException {
       super.close();
       file.save();

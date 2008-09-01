@@ -25,9 +25,9 @@ public class SFTPSettings {
     private static final boolean DEFAULT_OFFLINE_CHANGES = true;
     private static final boolean DEFAULT_ASK_SERVER_CHANGED_FILE = true;
     private static final boolean DEFAULT_ASK_CACHE_EXTERNAL_DELETE = true;
-    private static final boolean DEFAULT_CACHE_EXTERNAL_DELETE = true;
+    private static final boolean DEFAULT_CACHE_EXTERNAL_DELETE = false;
     private static final boolean DEFAULT_ASK_SERVER_EXTERNAL_DELETE = true;
-    private static final boolean DEFAULT_SERVER_EXTERNAL_DELETE = true;
+    private static final boolean DEFAULT_SERVER_EXTERNAL_DELETE = false;
     /** Property names */
     public static final String PROP_REFRESH_TIME = "refreshTime";
     public static final String PROP_ASK_WHICH_FILE = "askWhichFile";

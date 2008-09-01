@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 /** Object that represent FTP file with cache.
  * @author Libor Martinek
@@ -62,7 +63,7 @@ import java.util.StringTokenizer;
  */
 public class RemoteFile {
 
-    private static final boolean DEBUG = true;
+    private static final Logger log = Logger.getLogger(RemoteFile.class.getName());
     /** Parent RemoteFile object */
     private RemoteFile parent;
     /** Client  */
@@ -289,7 +290,7 @@ public class RemoteFile {
      * @throws java.io.IOException 
      */
     public synchronized RemoteFile[] getChildrenBlock() throws IOException {
-        //System.out.println("RemoteFile.getChildren: path="+getPath());
+//        log.info("RemoteFile.getChildren: path="+getPath());
         if (children == null) {
         } //TODO: 
 
@@ -1123,7 +1124,7 @@ public class RemoteFile {
     }
 
     //*************************************************************************** 
-    interface Notify {
+    protected interface Notify {
 
         public boolean isRefreshServer();
 
@@ -1151,7 +1152,7 @@ public class RemoteFile {
     }
 
     //*************************************************************************** 
-    interface RequestProcessor {
+    protected interface RequestProcessor {
 
         public void post(Runnable run);
     }

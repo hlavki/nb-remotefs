@@ -49,6 +49,7 @@ import java.io.OutputStream;
 import org.openide.filesystems.AbstractFileSystem;
 import org.openide.filesystems.DefaultAttributes;
 import org.openide.filesystems.FileStatusEvent;
+import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 import org.openide.util.actions.SystemAction;
@@ -61,7 +62,6 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         implements AbstractFileSystem.List, AbstractFileSystem.Info, AbstractFileSystem.Change,
         RemoteFile.Notify, RemoteFile.RequestProcessor {
 
-    static final long serialVersionUID = 5562503683369874863L;
     private static final String DEFAULT_START_DIR = "/";
     private static final String DEFAULT_SEPARATOR = "/";
     private static final boolean DEBUG = true;
@@ -333,7 +333,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @return
      */
     public String[] children(String name) {
-//        System.out.println("*** RemoteFileSystem.children: name="+name);
+//        System.out.println("*** RemoteFileSystem.children START: name=" + name);
         String[] result = new String[0];
         if (!isReady()) {
             return result;

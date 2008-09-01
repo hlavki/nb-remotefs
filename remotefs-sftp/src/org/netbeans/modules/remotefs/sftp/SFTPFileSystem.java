@@ -48,7 +48,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     /** Global FTP FileSystem settings */
     private SFTPSettings settings;
     /** Name of temporary directoty (if user doesn't entry own one) */
-    private static final String SFTPWORK;
+    private static final String SFTP_WORK;
     private static final String CACHE_FOLDER_NAME = "sftpcache";
 
 
@@ -66,7 +66,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
                 throw new RuntimeException(e);
             }
         }
-        SFTPWORK = fo.getName();
+        SFTP_WORK = fo.getName();
     }
 
     public SFTPFileSystem() {
@@ -118,7 +118,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
 
     private String getDefaultCache() {
         SFTPLogInfo sftpLogInfo = (SFTPLogInfo) logInfo;
-        return SFTPWORK + File.separator + sftpLogInfo.getHost() +
+        return SFTP_WORK + File.separator + sftpLogInfo.getHost() +
                 ((sftpLogInfo.getPort() == SFTPClient.DEFAULT_PORT) ? "" : ("_" + String.valueOf(sftpLogInfo.getPort()))) +
                 "_" + sftpLogInfo.getUser();
     }
