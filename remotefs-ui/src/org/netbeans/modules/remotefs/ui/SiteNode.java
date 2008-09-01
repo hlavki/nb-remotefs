@@ -18,7 +18,6 @@ import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
 import org.openide.nodes.Node;
-import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
@@ -63,7 +62,6 @@ public class SiteNode extends FilterNode {
 //    public String getHtmlDisplayName() {
 //        return "<b><font color=\"00AA00\">" + getName() + "</font></b>";
 //    }
-
     @Override
     public String getDisplayName() {
         return site.getDisplayName();
@@ -163,7 +161,6 @@ public class SiteNode extends FilterNode {
 
     @Override
     public Node.PropertySet[] getPropertySets() {
-        System.out.println("GETING PROPERTIES");
         Sheet.Set props = new Sheet.Set();
         props.setName("Basic Properties");
         props.put(getProperties());

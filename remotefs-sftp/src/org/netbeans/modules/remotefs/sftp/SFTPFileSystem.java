@@ -19,6 +19,7 @@ import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.Repository;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
@@ -51,7 +52,6 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     private static final String SFTP_WORK;
     private static final String CACHE_FOLDER_NAME = "sftpcache";
 
-
     static {
         /* BUGFIX for issue #123552
          * We need a default cache dir. 
@@ -67,10 +67,6 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
             }
         }
         SFTP_WORK = fo.getName();
-    }
-
-    public SFTPFileSystem() {
-        this(new SFTPLogInfo());
     }
 
     public SFTPFileSystem(SFTPLogInfo logInfo) {
@@ -133,7 +129,9 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     @Override
     public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
         if (!cacheDir.exists()) {
-            cacheDir.mkdirs();
+            FileObject fr = Repository.getDefault().getDefaultFileSystem().getRoot();
+            FileObject fo = fr.getFileObject(CACHE_FOLDER_NAME);
+            cacheDir = FileUtil.toFile(fo.createFolder(cacheDir.getName()));
         }
         SFTPClient sftpClient = new SFTPClient((SFTPLogInfo) loginfo);
         sftpClient.setReconnect(this);

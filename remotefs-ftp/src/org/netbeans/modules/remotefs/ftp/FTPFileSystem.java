@@ -55,6 +55,7 @@ import org.netbeans.modules.remotefs.ftp.client.FTPLogInfo;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.Repository;
 import org.openide.options.SystemOption;
 import org.openide.util.Exceptions;
@@ -305,7 +306,9 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      */
     public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
         if (!cacheDir.exists()) {
-            cacheDir.mkdirs();
+            FileObject fr = Repository.getDefault().getDefaultFileSystem().getRoot();
+            FileObject fo = fr.getFileObject(CACHE_FOLDER_NAME);
+            cacheDir = FileUtil.toFile(fo.createFolder(cacheDir.getName()));
         }
         File logfile = new File(cacheDir.getPath() + ".log");
         //RandomAccessFile logfile = new RandomAccessFile(cachedir.getPath()+".log","rw");
