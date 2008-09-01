@@ -41,6 +41,8 @@
  */
 package org.netbeans.modules.remotefs.api;
 
+import org.openide.nodes.Node;
+
 /** Interface for storing login information. Usually username, pasword, etc.
  *
  * @author  Libor Martinek
@@ -51,7 +53,9 @@ public interface LogInfo extends java.io.Serializable {
     /** Return human redable description of this LogInfo
      * @return 
      */
-    public String displayName();
+    String displayName();
 
-    public String getProtocol();
+    String getProtocol();
+
+    Node.Property[] getProperties(RemoteFileSystem fs);
 }

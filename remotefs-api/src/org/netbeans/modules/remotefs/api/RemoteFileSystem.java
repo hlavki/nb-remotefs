@@ -50,6 +50,7 @@ import org.openide.filesystems.AbstractFileSystem;
 import org.openide.filesystems.DefaultAttributes;
 import org.openide.filesystems.FileStatusEvent;
 import org.openide.filesystems.FileUtil;
+import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 import org.openide.util.actions.SystemAction;
@@ -182,6 +183,14 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         //catch (org.openide.loaders.DataObjectNotFoundException e) {}
         firePropertyChange("connected", null, isConnected() ? Boolean.TRUE : Boolean.FALSE);
     //firePropertyChange(PROP_SYSTEM_NAME, "", getSystemName());
+    }
+
+    /**
+     * Return node properties for properties window obtained from LogInfo
+     * @return
+     */
+    public Node.Property[] getProperties() {
+        return logInfo.getProperties(this);
     }
 
     /** Create new client

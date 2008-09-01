@@ -7,15 +7,22 @@ package org.netbeans.modules.remotefs.ui;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import javax.swing.text.DefaultEditorKit;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemManager;
 import org.netbeans.modules.remotefs.ui.resources.Bundle;
 import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.openide.util.Utilities;
+import org.openide.util.actions.SystemAction;
 
 /**
  * Top component which displays something.
@@ -38,6 +45,24 @@ final class RemoteFSExplorerTopComponent extends TopComponent implements Explore
         explorerManager.setRootContext(new RootNode(fsInfos));
         ((BeanTreeView) view).setRootVisible(true);
         ((BeanTreeView) view).setDragSource(true);
+
+        ActionMap map = getActionMap();
+        map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(explorerManager));
+        map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(explorerManager));
+        map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(explorerManager));
+        map.put("delete", ExplorerUtils.actionDelete(explorerManager, true)); // or false
+        map.put("filesystem", getAction(org.openide.actions.FileSystemAction.class));
+        InputMap keys = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        keys.put(KeyStroke.getKeyStroke("control C"), DefaultEditorKit.copyAction);
+        keys.put(KeyStroke.getKeyStroke("control X"), DefaultEditorKit.cutAction);
+        keys.put(KeyStroke.getKeyStroke("control V"), DefaultEditorKit.pasteAction);
+        keys.put(KeyStroke.getKeyStroke("DELETE"), "delete");
+
+        associateLookup(ExplorerUtils.createLookup(explorerManager, map));
+    }
+
+    private SystemAction getAction(Class<? extends SystemAction> clazz) {
+        return org.openide.util.SharedClassObject.findObject(clazz, true);
     }
 
     /** This method is called from within the constructor to

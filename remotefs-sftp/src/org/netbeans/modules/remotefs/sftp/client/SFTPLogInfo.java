@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.netbeans.modules.remotefs.api.LogInfo;
+import org.netbeans.modules.remotefs.api.RemoteFileSystem;
+import org.openide.nodes.Node;
 
 /**
  *
@@ -272,5 +274,26 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
 
     public String getProtocol() {
         return protocol;
+    }
+
+    public Node.Property[] getProperties(RemoteFileSystem fs) {
+        Node.Property[] props = new Node.Property[0];
+//        try {
+//            props[0] = new PropertySupport.Reflection<String>(fs, String.class, "server");
+//            props[0].setName("Server name or IP");
+//            props[1] = new PropertySupport.Reflection<String>(fs, String.class, "username");
+//            props[1].setName("Username");
+//            props[2] = new PropertySupport.Reflection<String>(fs, String.class, "password");
+//            props[2].setName("Password");
+//            props[3] = new PropertySupport.Reflection<Integer>(fs, int.class, "port");
+//            props[3].setName("Port");
+//            props[4] = new PropertySupport.Reflection<String>(fs, String.class, "startDir");
+//            props[4].setName("Root folder");
+////            Property prop6 = new PropertySupport.Reflection(site, File.class, "cache");
+////            prop6.setName("cache folder");
+//        } catch (NoSuchMethodException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
+        return props;
     }
 }

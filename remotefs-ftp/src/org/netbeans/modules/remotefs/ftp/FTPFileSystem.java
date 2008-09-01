@@ -258,14 +258,14 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     /** Get starting directory.
      * @return Value of property startdir.
      */
-    public String getStartdir() {
+    public String getStartDir() {
         return startDir;
     }
 
     /** Set starting directory.
      * @param startdir New value of property startdir.
      */
-    public void setStartdir(String startdir) {
+    public void setStartDir(String startdir) {
         String newstartdir = startdir;
         if (startdir == null || startdir.equals("/") || startdir.equals("")) {
             newstartdir = "/";

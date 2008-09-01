@@ -158,24 +158,7 @@ public class SiteNode extends FilterNode {
     }
 
     public Node.Property[] getProperties() {
-        Node.Property[] props = new Node.Property[5];
-        try {
-            props[0] = new PropertySupport.Reflection<String>(site, String.class, "server");
-            props[0].setName("Server name or IP");
-            props[1] = new PropertySupport.Reflection<String>(site, String.class, "username");
-            props[1].setName("Username");
-            props[2] = new PropertySupport.Reflection<String>(site, String.class, "password");
-            props[2].setName("Password");
-            props[3] = new PropertySupport.Reflection<Integer>(site, int.class, "port");
-            props[3].setName("Port");
-            props[4] = new PropertySupport.Reflection<String>(site, String.class, "startDir");
-            props[4].setName("Root folder");
-//            Property prop6 = new PropertySupport.Reflection(site, File.class, "cache");
-//            prop6.setName("cache folder");
-        } catch (NoSuchMethodException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return props;
+        return site.getProperties();
     }
 
     @Override
