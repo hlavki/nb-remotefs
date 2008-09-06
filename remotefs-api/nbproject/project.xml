@@ -42,6 +42,7 @@
             <public-packages>
                 <package>org.netbeans.modules.remotefs.api</package>
                 <package>org.netbeans.modules.remotefs.api.config</package>
+                <package>org.netbeans.modules.remotefs.api.events</package>
             </public-packages>
         </data>
     </configuration>

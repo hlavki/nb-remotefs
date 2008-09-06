@@ -4,6 +4,7 @@
  */
 package org.netbeans.modules.remotefs.ui;
 
+import org.netbeans.modules.remotefs.ui.nodes.RootNode;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;

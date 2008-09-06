@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.netbeans.modules.remotefs.ui;
+package org.netbeans.modules.remotefs.ui.nodes;
 
 import java.awt.Image;
 import java.io.IOException;

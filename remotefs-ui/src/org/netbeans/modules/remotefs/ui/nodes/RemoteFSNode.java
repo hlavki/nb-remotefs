@@ -2,30 +2,39 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.netbeans.modules.remotefs.ui;
+package org.netbeans.modules.remotefs.ui.nodes;
 
 import java.awt.Image;
 import java.util.List;
 import javax.swing.Action;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
 import org.netbeans.modules.remotefs.api.config.LogInfoList;
+import org.netbeans.modules.remotefs.api.events.RemoteFSEventListener;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.openide.windows.WindowManager;
 
 /**
  *
  * @author hlavki
  */
-public class RemoteFSNode extends AbstractNode {
+public class RemoteFSNode extends AbstractNode implements RemoteFSEventListener {
 
     private RemoteFileSystemInfo fsInfo;
 
-    public RemoteFSNode(RemoteFileSystemInfo fsInfo) throws DataObjectNotFoundException {
-        super(new SiteNode.SiteChildren(LogInfoList.getDefault().getLogInfosByProtocols(fsInfo)));
+    public RemoteFSNode(final RemoteFileSystemInfo fsInfo) throws DataObjectNotFoundException {
+        super(Children.create(new RemoteFileSystemFactory(fsInfo), true));
+        WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
+
+            public void run() {
+                refresh(fsInfo);
+            }
+        });
+        LogInfoList.getDefault().addRemoteFSEventListener(this);
         this.fsInfo = fsInfo;
     }
 
@@ -61,6 +70,10 @@ public class RemoteFSNode extends AbstractNode {
         return fsInfo.getDisplayName();
     }
 
+    public void remoteFSChanged() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public static class RemoteFSChildren extends Children.Keys<RemoteFileSystemInfo> {
 
         private List<RemoteFileSystemInfo> fsInfos;
@@ -79,5 +92,9 @@ public class RemoteFSNode extends AbstractNode {
                 return new Node[]{};
             }
         }
+    }
+
+    public synchronized void refresh(RemoteFileSystemInfo fsInfo) {
+        setChildren(Children.create(new RemoteFileSystemFactory(fsInfo), true));
     }
 }

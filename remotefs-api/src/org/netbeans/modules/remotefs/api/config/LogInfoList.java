@@ -69,7 +69,6 @@ public class LogInfoList {
         return logInfos;
     }
 
-
     public LogInfo getLogInfo(LogInfo impl) {
         if (impl == null) {
             throw new NullPointerException();
