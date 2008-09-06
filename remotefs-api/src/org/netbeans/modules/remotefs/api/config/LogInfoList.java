@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import org.netbeans.modules.remotefs.api.LogInfo;
+import org.netbeans.modules.remotefs.api.RemoteFileSystem;
+import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
 import org.netbeans.modules.remotefs.api.events.RemoteFSEventListener;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
@@ -19,13 +22,13 @@ import org.openide.util.lookup.Lookups;
  *
  * @author hlavki
  */
-public class RemoteFSConnList {
+public class LogInfoList {
 
-    private static RemoteFSConnList instance;
+    private static LogInfoList instance;
     private Lookup.Result<LogInfo> result = getLookupResult();
     private final List<RemoteFSEventListener> listeners = new ArrayList<RemoteFSEventListener>(1);
 
-    private RemoteFSConnList() {
+    private LogInfoList() {
         // issue 75204: forces the DataObject's corresponding to the DatabaseConnection's
         // to be initialized and held strongly so the same DatabaseConnection is
         // returns as long as it is held strongly
@@ -39,27 +42,39 @@ public class RemoteFSConnList {
         });
     }
 
-    public static synchronized RemoteFSConnList getDefault() {
+    public static synchronized LogInfoList getDefault() {
         if (instance == null) {
-            instance = new RemoteFSConnList();
+            instance = new LogInfoList();
         }
         return instance;
     }
 
-    public LogInfo[] geConncetionsArray() {
+    public LogInfo[] geLogInfosArray() {
         Collection<? extends LogInfo> dicts = result.allInstances();
         return dicts.toArray(new LogInfo[dicts.size()]);
     }
 
-    public Collection<? extends LogInfo> getConnections() {
+    public Collection<? extends LogInfo> getLogInfos() {
         return result.allInstances();
     }
 
-    public LogInfo getConnection(LogInfo impl) {
+    public List<RemoteFileSystem> getLogInfosByProtocols(RemoteFileSystemInfo fsInfo) {
+        List<RemoteFileSystem> logInfos = new ArrayList<RemoteFileSystem>();
+        Set<String> protocols = fsInfo.getSupportedProtocols();
+        for (LogInfo logInfo : getLogInfos()) {
+            if (protocols.contains(logInfo.getProtocol())) {
+                logInfos.add(fsInfo.createFileSystem(logInfo));
+            }
+        }
+        return logInfos;
+    }
+
+
+    public LogInfo getLogInfo(LogInfo impl) {
         if (impl == null) {
             throw new NullPointerException();
         }
-        Collection<? extends LogInfo> conns = getConnections();
+        Collection<? extends LogInfo> conns = getLogInfos();
         for (LogInfo conn : conns) {
             if (impl.equals(conn)) {
                 return conn;
@@ -76,7 +91,7 @@ public class RemoteFSConnList {
     }
 
     public boolean contains(LogInfo connection) {
-        return getConnection(connection) != null;
+        return getLogInfo(connection) != null;
     }
 
     public void remove(LogInfo connection) throws IOException {

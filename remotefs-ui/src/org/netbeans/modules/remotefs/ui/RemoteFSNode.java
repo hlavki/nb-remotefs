@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.util.List;
 import javax.swing.Action;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
+import org.netbeans.modules.remotefs.api.config.LogInfoList;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.AbstractNode;
@@ -24,7 +25,7 @@ public class RemoteFSNode extends AbstractNode {
     private RemoteFileSystemInfo fsInfo;
 
     public RemoteFSNode(RemoteFileSystemInfo fsInfo) throws DataObjectNotFoundException {
-        super(new SiteNode.SiteChildren(fsInfo.getConnections()));
+        super(new SiteNode.SiteChildren(LogInfoList.getDefault().getLogInfosByProtocols(fsInfo)));
         this.fsInfo = fsInfo;
     }
 

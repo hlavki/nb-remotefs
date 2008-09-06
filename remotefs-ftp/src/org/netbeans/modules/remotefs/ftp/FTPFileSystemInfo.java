@@ -58,4 +58,8 @@ public class FTPFileSystemInfo implements RemoteFileSystemInfo {
     public LogInfo createLogInfo(Properties data) {
         return new FTPLogInfo(data);
     }
+
+    public RemoteFileSystem createFileSystem(LogInfo logInfo) {
+        return new FTPFileSystem((FTPLogInfo) logInfo);
+    }
 }
