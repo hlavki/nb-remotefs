@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="xml">
+        <folder name="entities">
+            <folder name="RemoteFileSystem">
+                <file name="DTD_RemoteFileSystem_1_0" url="remote-file-system-1_0.dtd">
+                    <attr name="hint.originalPublicID" stringvalue="-//RemoteFileSystem//DTD RemoteFileSystem 1.0//EN"/>
+                </file>
+            </folder>
+        </folder>
+
+        <folder name="lookups">
+            <folder name="RemoteFileSystem">
+                <file name="DTD_RemoteFileSystem_1_0.instance">
+                    <attr name="instanceClass" stringvalue="org.netbeans.modules.remotefs.api.config.ConnectionPersistenceManager"/>
+                    <attr name="instanceOf" stringvalue="org.openide.loaders.Environment.Provider"/>
+                    <attr name="instanceCreate" methodvalue="org.netbeans.modules.remotefs.api.config.ConnectionPersistenceManager.createProvider"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+</filesystem>

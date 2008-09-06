@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://config.dictionary.easyedu.eu"
+            xmlns:tns="http://config.dictionary.easyedu.eu"
+            elementFormDefault="qualified">
+    
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            Dictionary configuration schema
+        </xsd:documentation>
+    </xsd:annotation>
+    
+    <!--xsd:element name="dictionaries" type="tns:Dictionaries"/-->
+    <xsd:element name="dictionary" type="tns:Dictionary"/>
+    
+    <xsd:complexType name="Dictionaries">
+        <xsd:sequence>
+            <xsd:element name="dictionary" minOccurs="0" maxOccurs="unbounded" type="tns:Dictionary"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="Dictionary">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="connection-name" type="xsd:string"/>
+            <xsd:element name="date-created" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

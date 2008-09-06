@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--- The root connection element. -->
+<!ELEMENT remotefs (name,property*)>
+
+<!--- The driver class. -->
+<!ELEMENT name EMPTY>
+<!ATTLIST name
+    value CDATA #REQUIRED
+>
+
+<!--- The driver name. -->
+<!ELEMENT property EMPTY>
+<!ATTLIST property
+    name CDATA #REQUIRED
+    value CDATA #REQUIRED
+>

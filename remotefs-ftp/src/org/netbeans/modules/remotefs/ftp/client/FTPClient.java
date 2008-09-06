@@ -109,13 +109,13 @@ public class FTPClient implements RemoteClient {
     /** Create new FTPClient with this login information
      * @param loginfo
      */
-    public FTPClient(FTPLogInfo loginfo) {
-        this.host = loginfo.getHost();
-        this.port = loginfo.getPort();
-        this.user = loginfo.getUser();
-        this.password = loginfo.getPassword();
-        this.startdir = loginfo.getRootFolder();
-        setPassiveMode(loginfo.isPassiveMode());
+    public FTPClient(FTPLogInfo logInfo) {
+        this.host = logInfo.getHost();
+        this.port = logInfo.getPort();
+        this.user = logInfo.getUser();
+        this.password = logInfo.getPassword();
+        this.startdir = logInfo.getRootFolder();
+        setPassiveMode(logInfo.isPassiveMode());
     }
 
     //***************************************************************************
@@ -902,37 +902,5 @@ public class FTPClient implements RemoteClient {
             }
         } catch (IOException e) {
         }
-    }
-    /* ###########################################################################
-    DEPRECATED METHODS
-    ########################################################################### */
-    //***************************************************************************
-
-    /** Sets Log to PrintWriter
-     * @deprecated : Java Logger is used instead
-     * @param log
-     * 
-     */
-    @Deprecated
-    public void setLog(PrintWriter log) {
-    }
-
-    //***************************************************************************
-    /** Sets Log to OutputStream
-     * @deprecated : Java Logger is used instead
-     * @param log
-     */
-    @Deprecated
-    public void setLog(OutputStream log) {
-    }
-
-    //***************************************************************************
-    /** Sets Log to FileDescriptor. In this case, log outputstream is automatically set during connecting
-     * @deprecated : Java Logger is used instead
-     * @param logfile 
-     * @throws IOException  
-     */
-    @Deprecated
-    public void setLog(File logfile) throws IOException {
     }
 }

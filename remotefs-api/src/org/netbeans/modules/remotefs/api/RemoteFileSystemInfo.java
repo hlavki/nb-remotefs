@@ -6,6 +6,8 @@ package org.netbeans.modules.remotefs.api;
 
 import java.awt.Image;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import org.openide.util.HelpCtx;
 
 /**
@@ -23,4 +25,8 @@ public interface RemoteFileSystemInfo {
     HelpCtx getHelp();
 
     void createConnection();
+
+    Set<String> getSupportedProtocols();
+
+    LogInfo createLogInfo(Properties data);
 }

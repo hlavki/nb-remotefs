@@ -50,6 +50,7 @@ import org.netbeans.modules.remotefs.api.RemoteFileName;
  */
 public class FTPFileName implements RemoteFileName {
 
+    public static final String ROOT_FOLDER = "/";
     private String name;
     private String directory;
 

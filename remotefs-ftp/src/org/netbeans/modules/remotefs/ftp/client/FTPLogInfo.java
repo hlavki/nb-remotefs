@@ -41,6 +41,7 @@
  */
 package org.netbeans.modules.remotefs.ftp.client;
 
+import java.util.Properties;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.openide.nodes.Node;
@@ -52,24 +53,24 @@ import org.openide.util.Exceptions;
  * @author  Libor Martinek
  * @version 1.0
  */
-public class FTPLogInfo implements LogInfo {
+public class FTPLogInfo extends LogInfo {
 
     static final long serialVersionUID = 4795532037339960289L;
     private static final String DEFAULT_PROTOCOL = "ftp";
-    /** Host name */
-    private String host = "localhost";
-    /** Port number */
-    private int port = FTPClient.DEFAULT_PORT;
-    /** User name */
-    private String user = "anonymous";
-    /** Password */
-    private String password = "forteuser@";
-    private String rootFolder = "/";
-    private boolean passiveMode = false;
-    private String protocol;
+    private static final String PROP_HOST = "host";
+    private static final String PROP_PORT = "port";
+    private static final String PROP_USER = "user";
+    private static final String PROP_PASSWORD = "password";
+    private static final String PROP_ROOT_FOLDER = "rootFolder";
+    private static final String PROP_PASSIVE_MODE = "passiveMode";
 
     /** Create empty LogInfo */
     public FTPLogInfo() {
+        this("localhost", FTPClient.DEFAULT_PORT, "anonymous", "forteuser@");
+    }
+
+    public FTPLogInfo(Properties data) {
+        super(data);
     }
 
     /** Create LogInfo
@@ -77,9 +78,21 @@ public class FTPLogInfo implements LogInfo {
      * @param port
      * @param user
      * @param password
+     * @param passiveMode
      */
     public FTPLogInfo(String host, int port, String user, String password) {
-        this(DEFAULT_PROTOCOL, host, port, user, password);
+        this(DEFAULT_PROTOCOL, host, port, user, password, false);
+    }
+
+    /** Create LogInfo
+     * @param host
+     * @param port
+     * @param user
+     * @param password
+     * @param passiveMode 
+     */
+    public FTPLogInfo(String host, int port, String user, String password, boolean passiveMode) {
+        this(DEFAULT_PROTOCOL, host, port, user, password, passiveMode);
     }
 
     /** Create LogInfo
@@ -89,97 +102,124 @@ public class FTPLogInfo implements LogInfo {
      * @param user
      * @param password 
      */
-    public FTPLogInfo(String protocol, String host, int port, String user, String password) {
-        this.protocol = protocol;
-        this.host = host;
-        this.port = port;
-        this.user = user;
-        this.password = password;
+    public FTPLogInfo(String protocol, String host, int port, String user, String password, boolean passiveMode) {
+        super();
+        this.setProperty(PROP_PROTOCOL, protocol);
+        setHost(host);
+        setPort(new Integer(port));
+        setUser(user);
+        setPassword(password);
+        setPassiveMode(passiveMode);
+        this.setProperty(PROP_NAME, getDisplayName());
+        setRootFolder(FTPFileName.ROOT_FOLDER);
     }
 
-    /** Set host name
-     * @param host 
-     */
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setPassiveMode(boolean aBoolean) {
-        this.passiveMode = aBoolean;
-    }
-
-    public boolean isPassiveMode() {
-        return this.passiveMode;
-    }
-
-    /** Set port number
-     * @param port 
-     */
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    /** Set user name
-     * @param user 
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    /** Set password
-     * @param password 
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /** Get host name
-     * @return 
+    /**
+     * Get hostname
+     * @return hostname
      */
     public String getHost() {
-        return host;
+        return data.getProperty(PROP_HOST);
     }
 
-    /** Get port number
-     * @return 
+    /**
+     * Set hostname
+     * @param host hostname
      */
-    public int getPort() {
-        return port;
+    public void setHost(String host) {
+        setProperty(PROP_HOST, host);
     }
 
-    /** Get user name
-     * @return 
-     */
-    public String getUser() {
-        return user;
-    }
-
-    /** Get password
-     * @return 
+    /**
+     * Get password
+     * @return password
      */
     public String getPassword() {
-        return password;
+        return data.getProperty(PROP_PASSWORD);
+    }
+
+    /**
+     * Set password
+     * @param password
+     */
+    public void setPassword(String password) {
+        setProperty(PROP_PASSWORD, password);
+    }
+
+    /**
+     * Get port nubmer
+     * @return port number
+     */
+    public Integer getPort() {
+        String value = data.getProperty(PROP_PORT);
+        return value != null ? Integer.valueOf(value) : null;
+    }
+
+    /**
+     * Set port number
+     * @param port port nubmer
+     */
+    public void setPort(Integer port) {
+        setProperty(PROP_PORT, port.toString());
+    }
+
+    /**
+     * Get root folder
+     * @return root folder
+     */
+    public String getRootFolder() {
+        return data.getProperty(PROP_ROOT_FOLDER);
+    }
+
+    /**
+     * Set root folder
+     * @param rootFolder root folder
+     */
+    public void setRootFolder(String rootFolder) {
+        setProperty(PROP_ROOT_FOLDER, rootFolder);
+    }
+
+    /**
+     * Get user name
+     * @return user name
+     */
+    public String getUser() {
+        return data.getProperty(PROP_USER);
+    }
+
+    /**
+     * Set user name
+     * @param user user name
+     */
+    public void setUser(String user) {
+        setProperty(PROP_USER, user);
+    }
+
+    /**
+     * Get port nubmer
+     * @return port number
+     */
+    public boolean isPassiveMode() {
+        String value = data.getProperty(PROP_PASSIVE_MODE);
+        return value != null ? Boolean.valueOf(value) : null;
+    }
+
+    /**
+     * Set port number
+     * @param port port nubmer
+     */
+    public void setPassiveMode(boolean passiveMode) {
+        setProperty(PROP_PASSIVE_MODE, Boolean.toString(passiveMode));
     }
 
     /** Return human redable description of this LogInfo */
-    public String displayName() {
-        return protocol + "://" + ((user != null && user.equalsIgnoreCase("anonymous")) ? "" : user + "@") +
-                host + ((port == FTPClient.DEFAULT_PORT) ? "" : (":" + String.valueOf(port)));
+    public String getDisplayName() {
+        String user = getUser();
+        return getProtocol() + "://" + ((user != null && user.equalsIgnoreCase("anonymous")) ? "" : user + "@") +
+                getHost() + ((getPort() == FTPClient.DEFAULT_PORT) ? "" : (":" + String.valueOf(getPort())));
     }
 
-    public String getRootFolder() {
-        return rootFolder;
-    }
-
-    public void setRootFolder(String rootFolder) {
-        this.rootFolder = rootFolder;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public Node.Property[] getProperties(RemoteFileSystem fs) {
+    public Node.Property[] getNodeProperties(RemoteFileSystem fs) {
         Node.Property[] props = new Node.Property[5];
         try {
             props[0] = new PropertySupport.Reflection<String>(fs, String.class, "server");

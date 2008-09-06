@@ -153,7 +153,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      */
     private String computeSystemName() {
         //System.out.println("FTPFileSystem.prepareSystemName");
-        return logInfo.displayName();// + ((startdir != null && startdir.startsWith("/")) ? "" : "/") + startdir;
+        return logInfo.getDisplayName();// + ((startdir != null && startdir.startsWith("/")) ? "" : "/") + startdir;
     }
 
     private String getDefaultCache() {
@@ -305,16 +305,8 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * @throws java.io.IOException 
      */
     public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
-        if (!cacheDir.exists()) {
-            FileObject fr = Repository.getDefault().getDefaultFileSystem().getRoot();
-            FileObject fo = fr.getFileObject(CACHE_FOLDER_NAME);
-            cacheDir = FileUtil.toFile(fo.createFolder(cacheDir.getName()));
-        }
-        File logfile = new File(cacheDir.getPath() + ".log");
-        //RandomAccessFile logfile = new RandomAccessFile(cachedir.getPath()+".log","rw");
-        //logfile.seek(logfile.length());
+        cacheDir = getCacheRootDirectory(CACHE_FOLDER_NAME);
         FTPClient lClient = new FTPClient((FTPLogInfo) loginfo);
-        lClient.setLog(logfile);
         lClient.setReconnect(this);
         lClient.setPassiveMode(getFTPSettings().isPassiveMode());
         return lClient;

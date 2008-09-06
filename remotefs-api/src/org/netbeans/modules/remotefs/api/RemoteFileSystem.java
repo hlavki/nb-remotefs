@@ -48,8 +48,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import org.openide.filesystems.AbstractFileSystem;
 import org.openide.filesystems.DefaultAttributes;
+import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileStatusEvent;
 import org.openide.filesystems.FileUtil;
+import org.openide.filesystems.Repository;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
@@ -164,7 +166,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                     RemoteFile root = createRootFile(client, cacheDir);
                     rootFile = root.find(startDir);
                     if (rootFile == null) {
-                        startdirNotFound(startDir, logInfo.displayName());
+                        startdirNotFound(startDir, logInfo.getDisplayName());
                         startDir = DEFAULT_START_DIR;
                         rootFile = root;
                     }
@@ -189,8 +191,24 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * Return node properties for properties window obtained from LogInfo
      * @return
      */
-    public Node.Property[] getProperties() {
-        return logInfo.getProperties(this);
+    public Node.Property[] getNodeProperties() {
+        return logInfo.getNodeProperties(this);
+    }
+
+    /**
+     * Return file directed to root directory of cache.
+     * @param cacheDirName
+     * @return
+     * @throws java.io.IOException
+     */
+    protected final File getCacheRootDirectory(String cacheDirName) throws IOException {
+        FileObject fr = Repository.getDefault().getDefaultFileSystem().getRoot();
+        FileObject fsCache = fr.getFileObject(cacheDirName);
+        FileObject fo = fsCache.getFileObject(this.cacheDir.getName());
+        if (fo == null) {
+            fo = fsCache.createFolder(this.cacheDir.getName());
+        }
+        return FileUtil.toFile(fo);
     }
 
     /** Create new client
@@ -638,7 +656,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @param run  */
     public void post(Runnable run) {
         if (requestProc == null) {
-            requestProc = new RequestProcessor("Remote Filesystem Request Processor for " + logInfo.displayName());
+            requestProc = new RequestProcessor("Remote Filesystem Request Processor for " + logInfo.getDisplayName());
         }
         requestProc.post(run);
     }

@@ -95,7 +95,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
         if (!connected) {  // will be disconnected
             // exists other filesystem with same server
             if (manager.moreOwners()) {
-                switch (disconnectDialog(logInfo.displayName())) {
+                switch (disconnectDialog(logInfo.getDisplayName())) {
                     case 0:
                         removeClient();
                         break;
@@ -121,7 +121,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
                 }
                 if (!isConnected()) {
                     if (manager.moreOwners()) {
-                        if (connectDialog(logInfo.displayName())) {
+                        if (connectDialog(logInfo.getDisplayName())) {
                             manager.getClient().connect();
                         //TODO: notify other FS?
                         } else {
@@ -136,7 +136,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
                 if (rootFile == null || (rootFile != null && !rootFile.getName().getFullName().equals(startDir))) {
                     rootFile = manager.getRoot(startDir);
                     if (rootFile == null) {
-                        startdirNotFound(startDir, logInfo.displayName());
+                        startdirNotFound(startDir, logInfo.getDisplayName());
                         startDir = "/";
                         rootFile = manager.getRoot();
                     }

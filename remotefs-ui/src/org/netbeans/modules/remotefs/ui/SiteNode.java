@@ -156,7 +156,7 @@ public class SiteNode extends FilterNode {
     }
 
     public Node.Property[] getProperties() {
-        return site.getProperties();
+        return site.getNodeProperties();
     }
 
     @Override

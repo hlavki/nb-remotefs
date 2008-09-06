@@ -41,21 +41,69 @@
  */
 package org.netbeans.modules.remotefs.api;
 
+import java.beans.PropertyChangeSupport;
+import java.util.Properties;
 import org.openide.nodes.Node;
 
 /** Interface for storing login information. Usually username, pasword, etc.
  *
- * @author  Libor Martinek
+ * @author  Michal Hlavac
  * @version 1.0
  */
-public interface LogInfo extends java.io.Serializable {
+public abstract class LogInfo implements java.io.Serializable {
+
+    public static final String PROP_NAME = "name";
+    public static final String PROP_PROTOCOL = "protocol";
+    public static final String PROP_INSTANCE_CLASS = "instanceClass";
+    protected Properties data;
+    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    public LogInfo() {
+        data = new Properties();
+    }
+
+    protected LogInfo(Properties data) {
+        this.data = data;
+    }
 
     /** Return human redable description of this LogInfo
      * @return 
      */
-    String displayName();
+    public abstract String getDisplayName();
 
-    String getProtocol();
+    public final String getProtocol() {
+        return data.getProperty(PROP_PROTOCOL);
+    }
 
-    Node.Property[] getProperties(RemoteFileSystem fs);
+    public abstract Node.Property[] getNodeProperties(RemoteFileSystem fs);
+
+    public final Properties getProperties() {
+        return data;
+    }
+
+    /**
+     * Add PropertyChangeListener.
+     *
+     * @param listener
+     */
+    public final void addPropertyChangeListener(java.beans.PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Remove PropertyChangeListener.
+     *
+     * @param listener
+     */
+    public final void removePropertyChangeListener(java.beans.PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    public final void setProperty(String key, String value) {
+        if (value != null) {
+            String oldValue = data.getProperty(key);
+            data.setProperty(key, value);
+            propertyChangeSupport.firePropertyChange(key, oldValue, value);
+        }
+    }
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -52,6 +53,21 @@ public final class RemoteFileSystemManager implements FileChangeListener {
 
     public List<RemoteFileSystemInfo> getRemoteFileSystems() {
         return fileSystems;
+    }
+
+    public RemoteFileSystemInfo getFileSystemInfoByProtocol(String protocol) throws UnknownFileSystemException {
+        RemoteFileSystemInfo result = null;
+        Iterator<RemoteFileSystemInfo> it = fileSystems.iterator();
+        while (it.hasNext() && result == null) {
+            RemoteFileSystemInfo fsInfo = it.next();
+            if (fsInfo.getSupportedProtocols().contains(protocol)) {
+                result = fsInfo;
+            }
+        }
+        if (result == null) {
+            throw new UnknownFileSystemException(protocol);
+        }
+        return result;
     }
 
     // Private methods ---------------------------------------------------------

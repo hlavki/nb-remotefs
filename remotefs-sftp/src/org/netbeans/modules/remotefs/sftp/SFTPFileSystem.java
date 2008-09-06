@@ -19,7 +19,6 @@ import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.Repository;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
@@ -51,6 +50,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     /** Name of temporary directoty (if user doesn't entry own one) */
     private static final String SFTP_WORK;
     private static final String CACHE_FOLDER_NAME = "sftpcache";
+
 
     static {
         /* BUGFIX for issue #123552
@@ -109,7 +109,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     }
 
     private String computeSystemName() {
-        return logInfo.displayName();
+        return logInfo.getDisplayName();
     }
 
     private String getDefaultCache() {
@@ -128,11 +128,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
 
     @Override
     public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
-        if (!cacheDir.exists()) {
-            FileObject fr = Repository.getDefault().getDefaultFileSystem().getRoot();
-            FileObject fo = fr.getFileObject(CACHE_FOLDER_NAME);
-            cacheDir = FileUtil.toFile(fo.createFolder(cacheDir.getName()));
-        }
+        cacheDir = getCacheRootDirectory(CACHE_FOLDER_NAME);
         SFTPClient sftpClient = new SFTPClient((SFTPLogInfo) loginfo);
         sftpClient.setReconnect(this);
         return sftpClient;

@@ -10,6 +10,7 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.Properties;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,21 +24,24 @@ import org.openide.nodes.Node;
  *
  * @author hlavki
  */
-public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Comparable<LogInfo> {
+public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteractive, Comparable<LogInfo> {
 
+    private static final String PROP_HOST = "host";
+    private static final String PROP_PORT = "port";
+    private static final String PROP_USER = "user";
+    private static final String PROP_PASSWORD = "password";
+    private static final String PROP_KEY_FILE = "keyFile";
     private static final String DEFAULT_PROTOCOL = "sftp";
+    private static final String PROP_ROOT_FOLDER = "rootFolder";
     private static final long serialVersionUID = 1L;
-    private String host;
-    private int port;
-    private String user;
-    private String password;
-    private String keyFile;
-    private String rootFolder;
     private JTextField passwordField;
-    private String protocol;
 
     public SFTPLogInfo() {
         this("localhost", null);
+    }
+
+    public SFTPLogInfo(Properties data) {
+        super(data);
     }
 
     public SFTPLogInfo(String host, String user) {
@@ -53,12 +57,19 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
     }
 
     public SFTPLogInfo(String protocol, String host, int port, String user, String password) {
-        this.protocol = protocol;
-        this.host = host;
-        this.port = port;
-        this.user = user;
-        this.password = password;
-        rootFolder = SFTPFileName.ROOT_FOLDER;
+//        this.protocol = protocol;
+//        this.host = host;
+//        this.port = port;
+//        this.user = user;
+//        this.password = password;
+        super();
+        this.setProperty(PROP_PROTOCOL, protocol);
+        setHost(host);
+        setPort(new Integer(port));
+        setUser(user);
+        setPassword(password);
+        this.setProperty(PROP_NAME, getDisplayName());
+        setRootFolder(SFTPFileName.ROOT_FOLDER);
         passwordField = new JPasswordField(20);
     }
 
@@ -67,7 +78,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @return hostname
      */
     public String getHost() {
-        return host;
+        return data.getProperty(PROP_HOST);
     }
 
     /**
@@ -75,7 +86,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @param host hostname
      */
     public void setHost(String host) {
-        this.host = host;
+        setProperty(PROP_HOST, host);
     }
 
     /**
@@ -83,7 +94,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @return password
      */
     public String getPassword() {
-        return password;
+        return data.getProperty(PROP_PASSWORD);
     }
 
     /**
@@ -91,23 +102,24 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @param password
      */
     public void setPassword(String password) {
-        this.password = password;
+        setProperty(PROP_PASSWORD, password);
     }
 
     /**
      * Get port nubmer
      * @return port number
      */
-    public int getPort() {
-        return port;
+    public Integer getPort() {
+        String value = data.getProperty(PROP_PORT);
+        return value != null ? Integer.valueOf(value) : null;
     }
 
     /**
      * Set port number
      * @param port port nubmer
      */
-    public void setPort(int port) {
-        this.port = port;
+    public void setPort(Integer port) {
+        setProperty(PROP_PORT, port.toString());
     }
 
     /**
@@ -115,7 +127,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @return root folder
      */
     public String getRootFolder() {
-        return rootFolder;
+        return data.getProperty(PROP_ROOT_FOLDER);
     }
 
     /**
@@ -123,7 +135,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @param rootFolder root folder
      */
     public void setRootFolder(String rootFolder) {
-        this.rootFolder = rootFolder;
+        setProperty(PROP_ROOT_FOLDER, rootFolder);
     }
 
     /**
@@ -131,7 +143,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @return user name
      */
     public String getUser() {
-        return user;
+        return data.getProperty(PROP_USER);
     }
 
     /**
@@ -139,15 +151,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @param user user name
      */
     public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String displayName() {
-        return protocol + "://" + user + "@" + host + (port == SFTPClient.DEFAULT_PORT ? "" : ":" + String.valueOf(port));
-    }
-
-    public String getPassphrase() {
-        return password;
+        setProperty(PROP_USER, user);
     }
 
     /**
@@ -155,7 +159,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @return private key path
      */
     public String getKeyFile() {
-        return keyFile;
+        return data.getProperty(PROP_KEY_FILE);
     }
 
     /**
@@ -163,7 +167,16 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
      * @param keyFile path to private key
      */
     public void setKeyFile(String keyFile) {
-        this.keyFile = keyFile;
+        setProperty(PROP_KEY_FILE, keyFile);
+    }
+
+    public String getDisplayName() {
+        return getProtocol() + "://" + getUser() + "@" + getHost() +
+                (getPort() == SFTPClient.DEFAULT_PORT ? "" : ":" + getPort());
+    }
+
+    public String getPassphrase() {
+        return getPassword();
     }
 
     public boolean promptPassword(String message) {
@@ -172,8 +185,8 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
                 JOptionPane.showConfirmDialog(null, ob, message,
                 JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
-            password = passwordField.getText();
-            System.out.println("Password is " + password);
+            setPassword(passwordField.getText());
+            System.out.println("Password is " + getPassword());
             return true;
         } else {
             return false;
@@ -247,7 +260,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
             String[] response = new String[prompt.length];
             for (int i = 0; i < prompt.length; i++) {
                 response[i] = texts[i].getText();
-                password = texts[i].getText();
+                setPassword(texts[i].getText());
             }
             return response;
         } else {
@@ -260,9 +273,9 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
             return -1;
         }
         SFTPLogInfo anotherLogInfo = (SFTPLogInfo) anotherObj;
-        if (host.equals(anotherLogInfo.getHost()) && port == anotherLogInfo.getPort() &&
-                user.equals(anotherLogInfo.getUser())) {
-            if (password.equals(anotherLogInfo.getPassword()) || keyFile.equals(anotherLogInfo.getKeyFile())) {
+        if (getHost().equals(anotherLogInfo.getHost()) && getPort() == anotherLogInfo.getPort() &&
+                getUser().equals(anotherLogInfo.getUser())) {
+            if (getPassword().equals(anotherLogInfo.getPassword()) || getKeyFile().equals(anotherLogInfo.getKeyFile())) {
                 return 0;
             } else {
                 return 1;
@@ -272,11 +285,7 @@ public class SFTPLogInfo implements LogInfo, UserInfo, UIKeyboardInteractive, Co
         }
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public Node.Property[] getProperties(RemoteFileSystem fs) {
+    public Node.Property[] getNodeProperties(RemoteFileSystem fs) {
         Node.Property[] props = new Node.Property[0];
 //        try {
 //            props[0] = new PropertySupport.Reflection<String>(fs, String.class, "server");
