@@ -44,6 +44,7 @@ package org.netbeans.modules.remotefs.ftp.client;
 import java.util.Properties;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
+import org.netbeans.modules.remotefs.ftp.FTPFileSystem;
 import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.util.Exceptions;
@@ -238,5 +239,14 @@ public class FTPLogInfo extends LogInfo {
             Exceptions.printStackTrace(ex);
         }
         return props;
+    }
+    private RemoteFileSystem fs;
+
+    @Override
+    public synchronized RemoteFileSystem createFileSystem() {
+        if (fs == null) {
+            fs = new FTPFileSystem(this);
+        }
+        return fs;
     }
 }

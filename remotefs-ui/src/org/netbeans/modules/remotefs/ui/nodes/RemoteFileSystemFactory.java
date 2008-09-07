@@ -7,7 +7,7 @@ package org.netbeans.modules.remotefs.ui.nodes;
 import java.util.List;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
-import org.netbeans.modules.remotefs.api.config.LogInfoList;
+import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;

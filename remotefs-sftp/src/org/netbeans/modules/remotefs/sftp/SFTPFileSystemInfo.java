@@ -15,7 +15,7 @@ import java.util.Set;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
-import org.netbeans.modules.remotefs.api.config.LogInfoList;
+import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.netbeans.modules.remotefs.sftp.client.SFTPLogInfo;
 import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.openide.util.Exceptions;
@@ -65,9 +65,5 @@ public class SFTPFileSystemInfo implements RemoteFileSystemInfo {
 
     public LogInfo createLogInfo(Properties data) {
         return new SFTPLogInfo(data);
-    }
-
-    public RemoteFileSystem createFileSystem(LogInfo logInfo) {
-        return new SFTPFileSystem((SFTPLogInfo)logInfo);
     }
 }

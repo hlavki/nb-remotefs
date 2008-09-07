@@ -5,10 +5,12 @@
 package org.netbeans.modules.remotefs.ui.nodes;
 
 import java.awt.Image;
+import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
-import org.netbeans.modules.remotefs.api.config.LogInfoList;
+import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.netbeans.modules.remotefs.api.events.RemoteFSEventListener;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
@@ -28,14 +30,14 @@ public class RemoteFSNode extends AbstractNode implements RemoteFSEventListener 
 
     public RemoteFSNode(final RemoteFileSystemInfo fsInfo) throws DataObjectNotFoundException {
         super(Children.create(new RemoteFileSystemFactory(fsInfo), true));
+        this.fsInfo = fsInfo;
         WindowManager.getDefault().invokeWhenUIReady(new Runnable() {
 
             public void run() {
-                refresh(fsInfo);
+                refresh();
             }
         });
         LogInfoList.getDefault().addRemoteFSEventListener(this);
-        this.fsInfo = fsInfo;
     }
 
     @Override
@@ -56,8 +58,7 @@ public class RemoteFSNode extends AbstractNode implements RemoteFSEventListener 
     @Override
     public Action[] getActions(boolean context) {
         DataFolder df = getLookup().lookup(DataFolder.class);
-        return new Action[]{/** TODO: AddFTPSiteAction.getInstance()*/
-                };
+        return new Action[]{new AddSiteAction()};
     }
 
     @Override
@@ -71,7 +72,7 @@ public class RemoteFSNode extends AbstractNode implements RemoteFSEventListener 
     }
 
     public void remoteFSChanged() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        refresh();
     }
 
     public static class RemoteFSChildren extends Children.Keys<RemoteFileSystemInfo> {
@@ -94,7 +95,20 @@ public class RemoteFSNode extends AbstractNode implements RemoteFSEventListener 
         }
     }
 
-    public synchronized void refresh(RemoteFileSystemInfo fsInfo) {
+    public synchronized void refresh() {
         setChildren(Children.create(new RemoteFileSystemFactory(fsInfo), true));
+    }
+
+    private class AddSiteAction extends AbstractAction {
+
+        private static final long serialVersionUID = 1L;
+
+        public AddSiteAction() {
+            putValue(NAME, "Add Connection...");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            fsInfo.createConnection();
+        }
     }
 }

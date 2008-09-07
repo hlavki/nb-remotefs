@@ -16,9 +16,11 @@ import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
 import org.netbeans.modules.remotefs.ftp.client.FTPLogInfo;
 import org.netbeans.modules.remotefs.ftp.resources.Bundle;
+import org.netbeans.modules.remotefs.ftp.ui.NewFTPSiteWizardAction;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 import org.openide.util.Utilities;
+import org.openide.util.actions.CallableSystemAction;
 
 /**
  *
@@ -48,7 +50,8 @@ public class FTPFileSystemInfo implements RemoteFileSystemInfo {
     }
 
     public void createConnection() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        CallableSystemAction action = NewFTPSiteWizardAction.getInstance();
+        action.performAction();
     }
 
     public Set<String> getSupportedProtocols() {
@@ -57,9 +60,5 @@ public class FTPFileSystemInfo implements RemoteFileSystemInfo {
 
     public LogInfo createLogInfo(Properties data) {
         return new FTPLogInfo(data);
-    }
-
-    public RemoteFileSystem createFileSystem(LogInfo logInfo) {
-        return new FTPFileSystem((FTPLogInfo) logInfo);
     }
 }

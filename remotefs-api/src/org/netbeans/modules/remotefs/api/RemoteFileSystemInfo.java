@@ -29,6 +29,4 @@ public interface RemoteFileSystemInfo {
     Set<String> getSupportedProtocols();
 
     LogInfo createLogInfo(Properties data);
-
-    public RemoteFileSystem createFileSystem(LogInfo logInfo);
 }

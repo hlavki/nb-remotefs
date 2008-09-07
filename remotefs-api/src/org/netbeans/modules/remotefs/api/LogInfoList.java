@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.netbeans.modules.remotefs.api.config;
+package org.netbeans.modules.remotefs.api;
 
+import org.netbeans.modules.remotefs.api.config.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +64,7 @@ public class LogInfoList {
         Set<String> protocols = fsInfo.getSupportedProtocols();
         for (LogInfo logInfo : getLogInfos()) {
             if (protocols.contains(logInfo.getProtocol())) {
-                logInfos.add(fsInfo.createFileSystem(logInfo));
+                logInfos.add(logInfo.createFileSystem());
             }
         }
         return logInfos;

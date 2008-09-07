@@ -1,63 +1,70 @@
 package org.netbeans.modules.remotefs.ftp.ui;
+
 import java.awt.Component;
 import java.awt.Dialog;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.text.MessageFormat;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.netbeans.modules.remotefs.ftp.client.FTPClient;
 import org.netbeans.modules.remotefs.ftp.client.FTPLogInfo;
-import org.netbeans.modules.remotefs.ftp.FTPFileSystem;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
-import org.openide.filesystems.FileLock;
-import org.openide.filesystems.FileObject;
-import org.openide.filesystems.Repository;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.Utilities;
 import org.openide.util.actions.CallableSystemAction;
+
 /**
  * Action that launches a wizard to register a new FTP site in the Explorer window.
  * 
  */
 public final class NewFTPSiteWizardAction extends CallableSystemAction {
+
+    private static final long serialVersionUID = 5592358462626059881L;
     private WizardDescriptor.Panel[] panels;
     private static NewFTPSiteWizardAction instance;
+
     private NewFTPSiteWizardAction() {
-        putValue(SMALL_ICON, new ImageIcon(Utilities.loadImage("org/netbeans/modules/remotefs/ui/resources/globe-sextant-16x16.png", true)));
+        putValue(SMALL_ICON, new ImageIcon(Utilities.loadImage("org/netbeans/modules/remotefs/ftp/resources/globe-sextant-16x16.png")));
     }
+
     public static CallableSystemAction getInstance() {
         if (instance == null) {
             instance = new NewFTPSiteWizardAction();
         }
         return instance;
     }
+
     public void performAction() {
-//        WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
-//        // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
-//        wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
-//        wizardDescriptor.setTitle("New FTP Site Wizard");
-//        Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
-//        dialog.setVisible(true);
-//        dialog.toFront();
-//        boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
-//        if (!cancelled) {
-//            //Validate
-//            Map<String, Object> props = wizardDescriptor.getProperties();
-//            RootNode ftpx = Utilities.actionsGlobalContext().lookup(RootNode.class);
+        WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
+        // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
+        wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
+        wizardDescriptor.setTitle("New FTP Site Wizard");
+        Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
+        dialog.setVisible(true);
+        dialog.toFront();
+        boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
+        if (!cancelled) {
+            //Validate
+            Map<String, Object> props = wizardDescriptor.getProperties();
+//            RemoteFSNode ftpx = Utilities.actionsGlobalContext().lookup(RemoteFSNode.class);
 //            if (ftpx != null) {
-//                FTPLogInfo info = new FTPLogInfo();
-//                info.setHost(props.get(NewFTPSiteVisualPanel1.SITE_SERVER).toString());
-//                info.setPort(FTPClient.DEFAULT_PORT);
-//                info.setUser(props.get(NewFTPSiteVisualPanel1.SITE_USER).toString());
-//                info.setPassword(props.get(NewFTPSiteVisualPanel1.SITE_PWD).toString());
-//                //info.setName(props.get(NewFTPSiteVisualPanel1.SITE_NAME).toString());
-//                info.setRootFolder(props.get(NewFTPSiteVisualPanel1.SITE_INIT_FOLDER).toString());
-//                info.setPassiveMode((Boolean)props.get(NewFTPSiteVisualPanel1.SITE_PASSIVE_MODE));
-//                final FTPFileSystem fs = new FTPFileSystem(info);
+            FTPLogInfo info = new FTPLogInfo();
+            info.setHost(props.get(NewFTPSiteVisualPanel1.SITE_SERVER).toString());
+            info.setPort(FTPClient.DEFAULT_PORT);
+            info.setUser(props.get(NewFTPSiteVisualPanel1.SITE_USER).toString());
+            info.setPassword(props.get(NewFTPSiteVisualPanel1.SITE_PWD).toString());
+            //info.setName(props.get(NewFTPSiteVisualPanel1.SITE_NAME).toString());
+            info.setRootFolder(props.get(NewFTPSiteVisualPanel1.SITE_INIT_FOLDER).toString());
+            info.setPassiveMode((Boolean) props.get(NewFTPSiteVisualPanel1.SITE_PASSIVE_MODE));
+            try {
+                LogInfoList.getDefault().add(info);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
 //              //  Repository.getDefault().addFileSystem(fs);
 //                ((RootNode.RootNodeChildren)ftpx.getChildren()).add(fs);
 //                try {
@@ -80,8 +87,9 @@ public final class NewFTPSiteWizardAction extends CallableSystemAction {
 //                    Exceptions.printStackTrace(ioe);
 //                }
 //            }
-//        }
+        }
     }
+
     /**
      * Initialize panels representing individual wizard's steps and sets
      * various properties for them influencing wizard appearance.
@@ -113,18 +121,20 @@ public final class NewFTPSiteWizardAction extends CallableSystemAction {
         }
         return panels;
     }
+
     public String getName() {
         return "Start Sample Wizard";
     }
-    
+
     @Override
     public String iconResource() {
         return null;
     }
+
     public HelpCtx getHelpCtx() {
         return HelpCtx.DEFAULT_HELP;
     }
-    
+
     @Override
     protected boolean asynchronous() {
         return false;

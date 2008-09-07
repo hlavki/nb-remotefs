@@ -77,6 +77,8 @@ public abstract class LogInfo implements java.io.Serializable {
 
     public abstract Node.Property[] getNodeProperties(RemoteFileSystem fs);
 
+    public abstract RemoteFileSystem createFileSystem();
+
     public final Properties getProperties() {
         return data;
     }

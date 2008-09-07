@@ -18,6 +18,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
+import org.netbeans.modules.remotefs.sftp.SFTPFileSystem;
 import org.openide.nodes.Node;
 
 /**
@@ -304,5 +305,14 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
 //            Exceptions.printStackTrace(ex);
 //        }
         return props;
+    }
+    private RemoteFileSystem fs;
+
+    @Override
+    public synchronized RemoteFileSystem createFileSystem() {
+        if (fs == null) {
+            fs = new SFTPFileSystem(this);
+        }
+        return fs;
     }
 }
