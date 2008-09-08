@@ -10,10 +10,12 @@ import javax.swing.JComponent;
 import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.netbeans.modules.remotefs.ftp.client.FTPClient;
 import org.netbeans.modules.remotefs.ftp.client.FTPLogInfo;
+import org.netbeans.modules.remotefs.ftp.resources.Bundle;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
+import org.openide.util.NbBundle;
 import org.openide.util.Utilities;
 import org.openide.util.actions.CallableSystemAction;
 
@@ -24,6 +26,8 @@ import org.openide.util.actions.CallableSystemAction;
 public final class NewFTPSiteWizardAction extends CallableSystemAction {
 
     private static final long serialVersionUID = 5592358462626059881L;
+    private static final String PROP_TITLE = "NewFTPSiteWizardAction.title";
+    private static final String PROP_NAME = "NewFTPSiteWizardAction.name";
     private WizardDescriptor.Panel[] panels;
     private static NewFTPSiteWizardAction instance;
 
@@ -39,10 +43,11 @@ public final class NewFTPSiteWizardAction extends CallableSystemAction {
     }
 
     public void performAction() {
+        @SuppressWarnings("unchecked")
         WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
         // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
         wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
-        wizardDescriptor.setTitle("New FTP Site Wizard");
+        wizardDescriptor.setTitle(NbBundle.getMessage(Bundle.class, PROP_TITLE));
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
         dialog.setVisible(true);
         dialog.toFront();
@@ -123,7 +128,7 @@ public final class NewFTPSiteWizardAction extends CallableSystemAction {
     }
 
     public String getName() {
-        return "Start Sample Wizard";
+        return NbBundle.getMessage(Bundle.class, PROP_NAME);
     }
 
     @Override

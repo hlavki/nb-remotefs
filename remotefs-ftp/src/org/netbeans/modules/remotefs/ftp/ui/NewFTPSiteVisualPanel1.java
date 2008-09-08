@@ -3,6 +3,7 @@ package org.netbeans.modules.remotefs.ftp.ui;
 import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import org.netbeans.modules.remotefs.ftp.resources.Bundle;
+import org.openide.util.NbBundle;
 
 public final class NewFTPSiteVisualPanel1 extends JPanel {
 
@@ -12,6 +13,7 @@ public final class NewFTPSiteVisualPanel1 extends JPanel {
     public static final String SITE_PWD = "site_pwd";
     public static final String SITE_INIT_FOLDER = "site_init_folder";
     public static final String SITE_PASSIVE_MODE = "site_passive_mode";
+    private static final String PROP_NAME = "NewFTPSiteVisualPanel1.name";
     private static final long serialVersionUID = 1L;
     private String siteName = "";
     private String siteServer = "";
@@ -25,7 +27,7 @@ public final class NewFTPSiteVisualPanel1 extends JPanel {
 
     @Override
     public String getName() {
-        return "Connection parameters";
+        return NbBundle.getMessage(Bundle.class, PROP_NAME);
     }
 
 //    private void setTestResult(boolean succes, String message) {

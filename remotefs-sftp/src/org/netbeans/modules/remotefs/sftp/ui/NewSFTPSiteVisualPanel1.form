@@ -20,6 +20,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="rootFolderLabel" alignment="0" max="32767" attributes="1"/>
                   <Component id="keyFileLabel" alignment="0" max="32767" attributes="1"/>
                   <Component id="userNameLabel" alignment="0" max="32767" attributes="1"/>
                   <Component id="portLabel" alignment="0" max="32767" attributes="1"/>
@@ -37,6 +38,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="browseKeyFileButton" min="-2" pref="25" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="rootFolderTextField" alignment="1" pref="316" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -71,6 +73,11 @@
                   <Component id="browseKeyFileButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="keyFileTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="rootFolderLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="rootFolderTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -80,25 +87,31 @@
     <Component class="javax.swing.JLabel" name="connNameLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPConnectionVisualPanel1.connNameLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPSiteVisualPanel1.connNameLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="connNameTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="hostLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPConnectionVisualPanel1.hostLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPSiteVisualPanel1.hostLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="hostTextField">
+      <Events>
+        <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="hostTextFieldCaretUpdate"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="portLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPConnectionVisualPanel1.portLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPSiteVisualPanel1.portLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -108,20 +121,26 @@
           <Connection code="SFTPClient.DEFAULT_PORT" type="code"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="portSpinnerStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="userNameLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPConnectionVisualPanel1.userNameLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPSiteVisualPanel1.userNameLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="userNameTextField">
+      <Events>
+        <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="userNameTextFieldCaretUpdate"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="keyFileLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPConnectionVisualPanel1.keyFileLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
+          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPSiteVisualPanel1.keyFileLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -139,6 +158,24 @@
           <Dimension value="[19, 19]"/>
         </Property>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="rootFolderLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPSiteVisualPanel1.rootFolderLabel.text" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="rootFolderTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+        <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/netbeans/modules/remotefs/sftp/resources/Bundle.properties" key="NewSFTPConnectionVisualPanel1.rootFolderTestLabel.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage(Bundle.class, &quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="rootFolderTextFieldCaretUpdate"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

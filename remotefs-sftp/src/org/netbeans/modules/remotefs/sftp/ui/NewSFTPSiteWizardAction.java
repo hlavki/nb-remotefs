@@ -6,31 +6,55 @@ package org.netbeans.modules.remotefs.sftp.ui;
 
 import java.awt.Component;
 import java.awt.Dialog;
+import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Map;
 import javax.swing.JComponent;
+import org.netbeans.modules.remotefs.api.LogInfoList;
+import org.netbeans.modules.remotefs.sftp.client.SFTPLogInfo;
+import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
+import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
+import org.openide.util.NbBundle;
 import org.openide.util.actions.CallableSystemAction;
 
 // An example action demonstrating how the wizard could be called from within
 // your code. You can copy-paste the code below wherever you need.
-public final class NewSFTPConnectionWizardAction extends CallableSystemAction {
+public final class NewSFTPSiteWizardAction extends CallableSystemAction {
 
     private static final long serialVersionUID = 1L;
+    private static final String PROP_TITLE = "NewSFTPSiteWizardAction.title";
+    private static final String PROP_NAME = "NewSFTPSiteWizardAction.name";
+    private static NewSFTPSiteWizardAction instance;
     private WizardDescriptor.Panel[] panels;
 
+    public static CallableSystemAction getInstance() {
+        if (instance == null) {
+            instance = new NewSFTPSiteWizardAction();
+        }
+        return instance;
+    }
+
     public void performAction() {
+        @SuppressWarnings("unchecked")
         WizardDescriptor wizardDescriptor = new WizardDescriptor(getPanels());
         // {0} will be replaced by WizardDesriptor.Panel.getComponent().getName()
         wizardDescriptor.setTitleFormat(new MessageFormat("{0}"));
-        wizardDescriptor.setTitle("Your wizard dialog title here");
+        wizardDescriptor.setTitle(NbBundle.getMessage(Bundle.class, PROP_TITLE));
         Dialog dialog = DialogDisplayer.getDefault().createDialog(wizardDescriptor);
         dialog.setVisible(true);
         dialog.toFront();
         boolean cancelled = wizardDescriptor.getValue() != WizardDescriptor.FINISH_OPTION;
         if (!cancelled) {
-            // do something
+            Map<String, Object> props = wizardDescriptor.getProperties();
+            SFTPLogInfo info = (SFTPLogInfo) props.get(NewSFTPSiteVisualPanel1.PROP_LOG_INFO);
+            try {
+                LogInfoList.getDefault().add(info);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
     }
 
@@ -41,7 +65,7 @@ public final class NewSFTPConnectionWizardAction extends CallableSystemAction {
     private WizardDescriptor.Panel[] getPanels() {
         if (panels == null) {
             panels = new WizardDescriptor.Panel[]{
-                        new NewSFTPConnectionWizardPanel1()
+                        new NewSFTPSiteWizardPanel1()
                     };
             String[] steps = new String[panels.length];
             for (int i = 0; i < panels.length; i++) {
@@ -70,7 +94,7 @@ public final class NewSFTPConnectionWizardAction extends CallableSystemAction {
     }
 
     public String getName() {
-        return "Start Sample Wizard";
+        return NbBundle.getMessage(Bundle.class, PROP_NAME);
     }
 
     @Override

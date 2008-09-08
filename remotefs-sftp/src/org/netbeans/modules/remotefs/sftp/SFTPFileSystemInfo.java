@@ -18,10 +18,12 @@ import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
 import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.netbeans.modules.remotefs.sftp.client.SFTPLogInfo;
 import org.netbeans.modules.remotefs.sftp.resources.Bundle;
+import org.netbeans.modules.remotefs.sftp.ui.NewSFTPSiteWizardAction;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.NbBundle;
 import org.openide.util.Utilities;
+import org.openide.util.actions.CallableSystemAction;
 
 /**
  *
@@ -56,7 +58,8 @@ public class SFTPFileSystemInfo implements RemoteFileSystemInfo {
     }
 
     public void createConnection() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        CallableSystemAction action = NewSFTPSiteWizardAction.getInstance();
+        action.performAction();
     }
 
     public Set<String> getSupportedProtocols() {

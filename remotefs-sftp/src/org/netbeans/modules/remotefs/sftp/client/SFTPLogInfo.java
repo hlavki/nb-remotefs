@@ -38,7 +38,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
     private JTextField passwordField;
 
     public SFTPLogInfo() {
-        this("localhost", null);
+        this("localhost", System.getProperty("user.name"));
     }
 
     public SFTPLogInfo(Properties data) {
@@ -50,7 +50,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
     }
 
     public SFTPLogInfo(String protocol, String host, String user) {
-        this(protocol, host, SFTPClient.DEFAULT_PORT, System.getProperty("user.name"), null);
+        this(protocol, host, SFTPClient.DEFAULT_PORT, user, null);
     }
 
     public SFTPLogInfo(String protocol, String host, String user, String password) {

@@ -9,7 +9,7 @@ import javax.swing.event.ChangeListener;
 import org.openide.WizardDescriptor;
 import org.openide.util.HelpCtx;
 
-public class NewSFTPConnectionWizardPanel1 implements WizardDescriptor.Panel {
+public class NewSFTPSiteWizardPanel1 implements WizardDescriptor.Panel {
 
     /**
      * The visual component that displays this panel. If you need to access the
@@ -23,7 +23,7 @@ public class NewSFTPConnectionWizardPanel1 implements WizardDescriptor.Panel {
     // create only those which really need to be visible.
     public Component getComponent() {
         if (component == null) {
-            component = new NewSFTPConnectionVisualPanel1();
+            component = new NewSFTPSiteVisualPanel1();
         }
         return component;
     }
@@ -82,6 +82,13 @@ public class NewSFTPConnectionWizardPanel1 implements WizardDescriptor.Panel {
     }
 
     public void storeSettings(Object settings) {
+        NewSFTPSiteVisualPanel1 panel = (NewSFTPSiteVisualPanel1) component;
+        ((WizardDescriptor) settings).putProperty(NewSFTPSiteVisualPanel1.PROP_LOG_INFO, panel.getLogInfo());
+//        ((WizardDescriptor) settings).putProperty(NewSFTPConnectionVisualPanel1.PROP_HOST, panel.getHost());
+//        ((WizardDescriptor) settings).putProperty(NewSFTPConnectionVisualPanel1.PROP_PORT, panel.getPort());
+//        ((WizardDescriptor) settings).putProperty(NewSFTPConnectionVisualPanel1.PROP_USER_NAME, panel.getUserName());
+//        ((WizardDescriptor) settings).putProperty(NewSFTPConnectionVisualPanel1.PROP_KEY_FILE, panel.getKeyFile());
+//        ((WizardDescriptor) settings).putProperty(NewSFTPConnectionVisualPanel1.PROP_ROOT_FOLDER, panel.getRootFolder());
     }
 }
 
