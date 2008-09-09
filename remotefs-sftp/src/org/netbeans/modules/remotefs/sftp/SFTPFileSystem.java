@@ -71,6 +71,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
 
     public SFTPFileSystem(SFTPLogInfo logInfo) {
         super();
+        this.settings = SFTPSettings.getDefault();
         this.logInfo = logInfo;
         setRefreshTime(getSFTPSettings().getRefreshTime());
         startDir = logInfo.getRootFolder();
@@ -97,14 +98,10 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
         return ((SFTPLogInfo) logInfo).getHost();
     }
 
-    /** Get FTPSettings object
+    /** Get SFTPSettings object
      * @return 
      */
     protected SFTPSettings getSFTPSettings() {
-        if (settings == null) {
-            log.info("SFTPSettings null. Initializing...");
-            settings = SFTPSettings.getDefault();
-        }
         return settings;
     }
 
