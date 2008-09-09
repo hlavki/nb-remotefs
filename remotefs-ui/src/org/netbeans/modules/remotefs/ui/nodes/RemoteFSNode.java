@@ -12,12 +12,14 @@ import javax.swing.Action;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
 import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.netbeans.modules.remotefs.api.events.RemoteFSEventListener;
+import org.netbeans.modules.remotefs.ui.resources.Bundle;
 import org.openide.loaders.DataFolder;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
 /**
@@ -102,9 +104,10 @@ public class RemoteFSNode extends AbstractNode implements RemoteFSEventListener 
     private class AddSiteAction extends AbstractAction {
 
         private static final long serialVersionUID = 1L;
+        private static final String PROP_NAME = "AddSiteAction.name";
 
         public AddSiteAction() {
-            putValue(NAME, "Add Connection...");
+            putValue(NAME, NbBundle.getMessage(Bundle.class, PROP_NAME));
         }
 
         public void actionPerformed(ActionEvent e) {

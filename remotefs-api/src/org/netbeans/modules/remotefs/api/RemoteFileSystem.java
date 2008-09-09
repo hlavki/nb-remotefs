@@ -46,6 +46,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openide.filesystems.AbstractFileSystem;
 import org.openide.filesystems.DefaultAttributes;
 import org.openide.filesystems.FileObject;
@@ -65,6 +67,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         implements AbstractFileSystem.List, AbstractFileSystem.Info, AbstractFileSystem.Change,
         RemoteFile.Notify, RemoteFile.RequestProcessor {
 
+    private static final Logger log = Logger.getLogger(RemoteFileSystem.class.getName());
     private static final String DEFAULT_START_DIR = "/";
     private static final String DEFAULT_SEPARATOR = "/";
     /** remote client */
@@ -298,10 +301,10 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                         }
                     }
                 });
+            } else {
+                log.warning("File " + name + " not found!");
             }
-        //else System.out.println("RemoteFileSystem.refreshAll: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
-            //if (DEBUG) e.printStackTrace(); 
             Exceptions.printStackTrace(e);
         }
     }
@@ -325,10 +328,10 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                         }
                     }
                 });
+            } else {
+                log.warning("File " + name + " not found!");
             }
-        //else System.out.println("FTPFileSystem.downloadAll: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
-            //if (DEBUG) e.printStackTrace(); 
             Exceptions.printStackTrace(e);
         }
     }
@@ -343,10 +346,10 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
                 f.cleanCache();
+            } else {
+                log.warning("File " + name + " not found!");
             }
-        //else System.out.println("FTPFileSystem.cleanCache: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
-            //if (DEBUG) e.printStackTrace(); 
             Exceptions.printStackTrace(e);
         }
     }
@@ -360,7 +363,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @return
      */
     public String[] children(String name) {
-//        System.out.println("*** RemoteFileSystem.children START: name=" + name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("START: Name: " + name);
+        }
         String[] result = new String[0];
         if (!isReady()) {
             return result;
@@ -371,8 +376,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                 if (f.isDirectory()) {
                     result = f.getStringChildren();
                 }
+            } else {
+                log.warning("RemoteFileSystem.children: File " + name + " not found!");
             }
-//        else System.out.println("RemoteFileSystem.children: file "+name+" NOT FOUND");
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
         }
@@ -388,7 +394,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws IOException if operation fails
      */
     public void createFolder(String name) throws java.io.IOException {
-        //System.out.println("*** FTPFileSystem.createFolder: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         isReadyToModify();
         RemoteFile f = null;
         String relname = null;
@@ -402,8 +410,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         }
         if (f != null) {
             f.createFolder(relname);
+        } else {
+            log.warning("Parent of file " + name + " not found!");
         }
-    //else System.out.println("FTPFileSystem.createFolder: parent of ftpfile "+name+" NOT FOUND");
     }
 
     /** Creates new folder and all necessary subfolders
@@ -411,7 +420,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws IOException
      */
     public void createData(String name) throws IOException {
-        //System.out.println("*** FTPFileSystem.createData: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         isReadyToModify();
         RemoteFile f = null;
         String relname = null;
@@ -425,8 +436,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         }
         if (f != null) {
             f.createData(relname);
+        } else {
+            log.warning("Parent of file " + name + " not found!");
         }
-    //else System.out.println("FTPFileSystem.createData: parent of ftpfile "+name+" NOT FOUND");
     }
 
     /* Renames a file.
@@ -435,7 +447,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws IOException
      */
     public void rename(String oldName, String newName) throws IOException {
-        //System.out.println("*** FTPFileSystem.rename: oldname="+oldName+" newname="+newName);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Old name: " + oldName + ", New name: " + newName);
+        }
         isReadyToModify();
         RemoteFile of = getRemoteFile(oldName);
         if (of != null) {
@@ -460,8 +474,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                 name = nname.substring(slash2 + 1);
             }
             of.rename(name);
+        } else {
+            log.warning("File " + oldName + " not found!");
         }
-    //else System.out.println("FTPFileSystem.rename: ftpfile "+oldName+" NOT FOUND");
     }
 
     /* Delete the file. 
@@ -470,13 +485,16 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws IOException if the file could not be deleted
      */
     public void delete(String name) throws IOException {
-        //System.out.println("*** FTPFileSystem.delete: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         isReadyToModify();
         RemoteFile file = getRemoteFile(name);
         if (file != null) {
             file.delete();
+        } else {
+            log.warning("File " + name + " not found!");
         }
-    // else System.out.println("FTPFileSystem.delete: ftpfile "+name+" NOT FOUND");
     }
 
     //
@@ -489,7 +507,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @return the date
      */
     public java.util.Date lastModified(String name) {
-        //System.out.println("*** FTPFileSystem.lastModified: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         java.util.Date date = new java.util.Date(0);
         if (!isReady()) {
             return date;
@@ -498,8 +518,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
                 date = f.lastModified();
+            } else {
+                log.warning("File " + name + " not found!");
             }
-        // else System.out.println("FTPFileSystem.lastModified: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
         }
@@ -511,7 +532,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @return true if the file is folder, false otherwise
      */
     public boolean folder(String name) {
-        //System.out.println("*** FTPFileSystem.folder: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         if (!isReady()) {
             return true;
         }
@@ -519,8 +542,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
                 return f.isDirectory();
+            } else {
+                log.warning("File " + name + " not found!");
             }
-        //else System.out.println("FTPFileSystem.folder: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
         }
@@ -532,7 +556,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @return true if file is read-only
      */
     public boolean readOnly(String name) {
-        //System.out.println("*** FTPFileSystem.readOnly: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         if (!isReady()) {
             return false;
         }
@@ -540,8 +566,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
                 return f.isReadOnly();
+            } else {
+                System.out.println("File " + name + " not found!");
             }
-        //else System.out.println("FTPFileSystem.readOnly: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
         }
@@ -565,7 +592,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      *  exist or is a folder).
      */
     public long size(String name) {
-        //System.out.println("*** FTPFileSystem.size: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         if (!isReady()) {
             return 0;
         }
@@ -573,8 +602,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
                 return f.getSize();
+            } else {
+                log.warning("File " + name + " not found!");
             }
-        //else System.out.println("FTPFileSystem.size: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
         }
@@ -588,15 +618,18 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @exception FileNotFoundException if the file does not exists or is invalid
      */
     public InputStream inputStream(String name) throws java.io.FileNotFoundException {
-        //System.out.println("*** FTPFileSystem.inputStream: name"+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         InputStream is = null;
         try {
             isReadyToRead();
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
                 is = f.getInputStream();
+            } else {
+                log.warning("File " + name + " not found!");
             }
-        //else System.out.println("FTPFileSystem.inputStream: ftpfile "+name+" NOT FOUND");
         } catch (IOException e) {
             throw new FileNotFoundException(e.toString() + " NAME: " + name);
         }
@@ -610,13 +643,16 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @exception IOException if an error occures (the file is invalid, etc.)
      */
     public OutputStream outputStream(String name) throws java.io.IOException {
-        //System.out.println("*** FTPFileSystem.outputStream: name="+name);
+        if (log.isLoggable(Level.FINE)) {
+            log.fine("Name: " + name);
+        }
         isReadyToModify();
         RemoteFile f = getRemoteFile(name);
         if (f != null) {
             return f.getOutputStream();
+        } else {
+            log.warning("File " + name + " not found!");
         }
-        //else System.out.println("FTPFileSystem.outputStream: ftpfile "+name+" NOT FOUND");
         return null;
     }
 
@@ -625,7 +661,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws IOException
      */
     public void lock(String name) throws IOException {
-        //System.out.println("*** FTPFileSystem.lock: name="+name);
+        log.fine("Locking file " + name);
     }
 
     /** Does nothing to unlock the file.
@@ -633,7 +669,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @param name name of the file
      */
     public void unlock(String name) {
-        //System.out.println("*** FTPFileSystem.unlock: name="+name);
+        log.fine("Unlocking file " + name);
     }
 
     /** Does nothing to mark the file as unimportant.
