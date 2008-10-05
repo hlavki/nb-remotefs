@@ -75,6 +75,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     private FTPSettings ftpsettings = SystemOption.findObject(FTPSettings.class, true);
     static final String CACHE_FOLDER_NAME = "ftpcache";
 
+
     static {
         /* BUGFIX for issue #123552
          * We need a default cache dir. 
@@ -265,19 +266,20 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     /** Set starting directory.
      * @param startdir New value of property startdir.
      */
-    public void setStartDir(String startdir) {
-        String newstartdir = startdir;
-        if (startdir == null || startdir.equals("/") || startdir.equals("")) {
-            newstartdir = "/";
+    public void setStartDir(String startDir) {
+        String newStartDir = startDir;
+        if (startDir == null || startDir.equals("/") || startDir.equals("")) {
+            newStartDir = "/";
         } else {
-            if (!startdir.startsWith("/")) {
-                newstartdir = "/" + startdir;
+            if (!startDir.startsWith("/") || !startDir.startsWith(".")) {
+                newStartDir = "/" + startDir;
             }
-            if (newstartdir.endsWith("/")) {
-                newstartdir = newstartdir.substring(0, newstartdir.length() - 1);
+            if (newStartDir.endsWith("/")) {
+                newStartDir = newStartDir.substring(0, newStartDir.length() - 1);
             }
         }
-        this.startDir = newstartdir;
+        this.startDir = newStartDir;
+        ((FTPLogInfo) logInfo).setRootFolder(newStartDir);
         removeClient();
     }
 

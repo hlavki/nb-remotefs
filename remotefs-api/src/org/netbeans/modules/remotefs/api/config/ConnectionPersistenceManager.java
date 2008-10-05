@@ -316,7 +316,9 @@ public class ConnectionPersistenceManager implements Environment.Provider, Insta
             pw.println("<remotefs>"); //NOI18N
             pw.println("  <" + Handler.ELEMENT_NAME + " value='" + instance.getDisplayName() + "'/>"); //NOI18N
             for (Map.Entry<Object, Object> entry : instance.getProperties().entrySet()) {
-                pw.println("  <property name='" + entry.getKey() + "' value='" + entry.getValue() + "'/>"); //NOI18N
+                if (!entry.getKey().equals(LogInfo.PROP_NAME)) {
+                    pw.println("  <property name='" + entry.getKey() + "' value='" + entry.getValue() + "'/>"); //NOI18N
+                }
             }
             pw.println("</remotefs>"); //NOI18N
         }

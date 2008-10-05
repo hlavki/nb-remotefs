@@ -169,7 +169,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
         if (startDir == null || startDir.equals("/") || startDir.equals("")) {
             newStartDir = "/";
         } else {
-            if (!startDir.startsWith("/")) {
+            if (!startDir.startsWith("/") && !startDir.startsWith(".")) {
                 newStartDir = "/" + startDir;
             }
             if (newStartDir.endsWith("/")) {
@@ -177,6 +177,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
             }
         }
         this.startDir = newStartDir;
+        ((SFTPLogInfo)logInfo).setRootFolder(newStartDir);
         removeClient();
     }
 

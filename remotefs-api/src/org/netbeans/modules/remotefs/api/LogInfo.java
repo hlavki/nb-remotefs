@@ -102,10 +102,8 @@ public abstract class LogInfo implements java.io.Serializable {
     }
 
     public final void setProperty(String key, String value) {
-        if (value != null) {
-            String oldValue = data.getProperty(key);
-            data.setProperty(key, value);
-            propertyChangeSupport.firePropertyChange(key, oldValue, value);
-        }
+        String oldValue = data.getProperty(key);
+        data.setProperty(key, value);
+        propertyChangeSupport.firePropertyChange(key, oldValue, value);
     }
 }
