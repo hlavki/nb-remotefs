@@ -60,7 +60,7 @@ public class SFTPClient implements RemoteClient {
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
         } catch (JSchException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         }
     }
 
@@ -94,7 +94,7 @@ public class SFTPClient implements RemoteClient {
                 fileOut.write(buffer, 0, len);
             }
         } catch (SftpException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         } finally {
             if (fileOut != null) {
                 try {
@@ -130,7 +130,7 @@ public class SFTPClient implements RemoteClient {
                 fileOut.write(buffer, 0, len);
             }
         } catch (SftpException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         } finally {
             if (inData != null) {
                 try {
@@ -207,7 +207,7 @@ public class SFTPClient implements RemoteClient {
                 }
             }
         } catch (SftpException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         } finally {
             try {
                 if (pwd != null) {
@@ -229,7 +229,7 @@ public class SFTPClient implements RemoteClient {
         try {
             channel.rename(src.getFullName(), dst.getFullName());
         } catch (SftpException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         }
     }
 
@@ -241,7 +241,7 @@ public class SFTPClient implements RemoteClient {
             log.fine("Deleting " + name.getFullName());
             channel.rm(name.getFullName());
         } catch (SftpException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         }
     }
 
@@ -254,7 +254,7 @@ public class SFTPClient implements RemoteClient {
             log.fine("Creating directory " + fullPath);
             channel.mkdir(fullPath);
         } catch (SftpException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         }
     }
 
@@ -266,7 +266,7 @@ public class SFTPClient implements RemoteClient {
             log.fine("Removing directory " + name.getFullName());
             channel.rmdir(name.getFullName());
         } catch (SftpException e) {
-            throw new SFTPException(e);
+            throw new SFTPException(e.getMessage());
         }
     }
 
