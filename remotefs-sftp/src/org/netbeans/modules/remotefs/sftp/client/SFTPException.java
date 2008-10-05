@@ -21,12 +21,4 @@ public class SFTPException extends IOException {
     public SFTPException(String message) {
         super(message);
     }
-
-    public SFTPException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public SFTPException(Throwable cause) {
-        super(cause);
-    }
 }
