@@ -51,8 +51,6 @@ import org.openide.filesystems.FileStatusEvent;
 public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
         implements RemoteManager.RemoteOwner, RemoteFile.Notify {
 
-    static final long serialVersionUID = 5983095716602271792L;
-    private static final boolean DEBUG = true;
     /** RemoteManager */
     protected transient RemoteManager manager = null;
 
@@ -86,6 +84,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
     /** Connect to or diconnect from server.
      * @param connected New value of property connected.
      */
+    @Override
     public void setConnected(boolean connected) {
         // is new state different?
         //System.out.println("ManagedRemoteFileSystem.setConnected");
@@ -137,7 +136,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
                     rootFile = manager.getRoot(startDir);
                     if (rootFile == null) {
                         startdirNotFound(startDir, logInfo.getDisplayName());
-                        startDir = "/";
+                        startDir = DEFAULT_ROOT_DIR;
                         rootFile = manager.getRoot();
                     }
                 }
@@ -147,7 +146,7 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
                 }
                 errorConnect(e.toString());
             }
-            synchronize("/");
+            synchronize(DEFAULT_ROOT_DIR);
         }
         fireFileStatusChanged(new FileStatusEvent(this, getRoot(), true, true));
         //refreshRoot();

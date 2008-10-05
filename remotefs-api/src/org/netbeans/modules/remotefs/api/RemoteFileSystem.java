@@ -68,7 +68,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         RemoteFile.Notify, RemoteFile.RequestProcessor {
 
     private static final Logger log = Logger.getLogger(RemoteFileSystem.class.getName());
-    private static final String DEFAULT_START_DIR = "/";
+    protected static final String DEFAULT_ROOT_DIR = "/";
     private static final String DEFAULT_SEPARATOR = "/";
     /** remote client */
     protected transient RemoteClient client;
@@ -77,7 +77,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** Root of cache directory */
     protected File cacheDir = null;
     /** Server start directory */
-    protected String startDir = DEFAULT_START_DIR;
+    protected String startDir = DEFAULT_ROOT_DIR;
     /** path separator */
     protected String separator = DEFAULT_SEPARATOR;
     /** Login information */
@@ -170,7 +170,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                     rootFile = root.find(startDir);
                     if (rootFile == null) {
                         startdirNotFound(startDir, logInfo.getDisplayName());
-                        startDir = DEFAULT_START_DIR;
+                        startDir = DEFAULT_ROOT_DIR;
                         rootFile = root;
                     }
                 }

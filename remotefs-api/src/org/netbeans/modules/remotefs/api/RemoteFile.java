@@ -80,13 +80,9 @@ public class RemoteFile {
     private RequestProcessor rp;
     /** Path separator */
     private static final String PATH_SEP = "/";
-    private int status;
-    private static final int NOT_CACHED = 0;
-    private static final int CACHED = 1;
-    private static final int OPEN = 2;
-    private static final int CHANGED = 3;
-    private boolean onserver;
-    private long cachelastmodified;
+    private Status status;
+    private boolean onServer;
+    private long cacheLastModified;
     private boolean childrenChanged = false;
     private boolean nextNoChildren = false;
 
@@ -108,14 +104,14 @@ public class RemoteFile {
         this.client = client;
         this.notify = notify;
         this.file = file;
-        this.onserver = onserver;
+        this.onServer = onserver;
         this.rp = rp;
 
         //System.out.println("RemoteFile.RemoteFile: name="+attrib.getName()+" dir="+attrib.isDirectory()+" cache="+file.getPath());
 
         // Directory of File?
         if (attrib.isDirectory()) {
-            status = NOT_CACHED;
+            status = Status.NOT_CACHED;
             if (client.isConnected()) {
                 if (!onserver) {
                     // directory doesn't exist on server. Create new.
@@ -129,7 +125,7 @@ public class RemoteFile {
                 if (file.exists() && list != null && list.length > 0)
                 getChildren();
                  */
-                this.onserver = true;
+                this.onServer = true;
             }
             if (!file.exists()) {
                 // directory doesn't exist in cache. Create new.
@@ -137,25 +133,25 @@ public class RemoteFile {
                 //System.out.println("RemoteFile: creating dir "+file.getPath()+" in cache");
                 if (!onserver) // New created directory doesn't contain children
                 {
-                    status = CACHED;
+                    status = Status.CACHED;
                 } else // Directory exist on server but isn't cached
                 {
-                    status = NOT_CACHED;
+                    status = Status.NOT_CACHED;
                 }
             }
         } // File
         else {
             if (!file.exists()) { // if file doesn't exist in cache..
                 if (onserver) {
-                    status = NOT_CACHED;
+                    status = Status.NOT_CACHED;
                 } // ..but exists on server
                 else {
-                    status = CACHED;
+                    status = Status.CACHED;
                 } // ..and also doesn't exist on server
-                cachelastmodified = file.lastModified();
+                cacheLastModified = file.lastModified();
             } else {  // file exist in cache
-                status = CACHED;
-                cachelastmodified = file.lastModified();
+                status = Status.CACHED;
+                cacheLastModified = file.lastModified();
                 int which;
                 if (!onserver) {
                     which = 0;
@@ -171,13 +167,13 @@ public class RemoteFile {
                     }
                 }
                 if (which == 0) {  // file in cache is the right one
-                    status = CHANGED;
-                    cachelastmodified = file.lastModified();
+                    status = Status.CHANGED;
+                    cacheLastModified = file.lastModified();
                     save();
                 //System.out.println("RemoteFile: saving "+getPath()+" to server");
                 } else if (which == 1) {  // file on server is the right one
                     file.delete();
-                    status = NOT_CACHED;
+                    status = Status.NOT_CACHED;
                     if (notify.isDownloadServerChangedFile()) {
                         load();
                     //System.out.println("RemoteFile: loading "+getPath()+" from server");
@@ -267,6 +263,7 @@ public class RemoteFile {
             nextNoChildren = false;
             return children;
         }
+        // FIXME: this is bug!!! I need to wait for getChildrenBlock() before I return children
         rp.post(new Runnable() {
 
             public void run() {
@@ -281,6 +278,7 @@ public class RemoteFile {
                 }
             }
         });
+
         return children;
     }
 
@@ -294,7 +292,7 @@ public class RemoteFile {
         if (children == null) {
         } //TODO: 
 
-        status = CACHED; // TODO: here or at the end?
+        status = Status.CACHED; // TODO: here or at the end?
         // construct HashMap of existing children list
         Set<String> childrenSet = null;
         HashMap<String, RemoteFile> childrenMap = null;
@@ -316,7 +314,7 @@ public class RemoteFile {
         HashMap<String, RemoteFileAttributes> serverMap = new HashMap<String, RemoteFileAttributes>();
         Set<String> serverSet;
         //TODO: refresh x always
-        if (notify.isRefreshServer() && onserver && client.isConnected()) {
+        if (notify.isRefreshServer() && onServer && client.isConnected()) {
             RemoteFileAttributes remoteFiles[] = client.list(getName());
             if (remoteFiles != null) {
                 for (int i = 0; i < remoteFiles.length; i++) {
@@ -409,12 +407,12 @@ public class RemoteFile {
                 while (iter.hasNext()) {
                     String name = (String) (iter.next());
                     RemoteFile f = childrenMap.get(name);
-                    if (!onserver) {
+                    if (!onServer) {
                         // set onserver = false if parent (this) file has also onserver==false;
-                        f.onserver = false;
-                        if (f.status != NOT_CACHED && f.file.exists()) // ???
+                        f.onServer = false;
+                        if (!Status.NOT_CACHED.equals(f.status) && f.file.exists()) // ???
                         {
-                            f.status = CHANGED;
+                            f.status = Status.CHANGED;
                         }
                     }
                     f.refresh(new RemoteFileAttributes(f.getName(), isDirectory()));
@@ -439,7 +437,7 @@ public class RemoteFile {
         RemoteFileAttributes at[];
         at = client.list(getName());
         if (at == null || at.length == 0) {
-            if (!onserver) {
+            if (!onServer) {
                 return null;
             }
             //System.out.println("TESTING alwaysRefresh");
@@ -473,12 +471,12 @@ public class RemoteFile {
             // directory in cache was deleted, if doesn't exist (directory in cache must always exist)
             boolean cacheDeleted = !file.exists();
             // directory in server was deleetd if client is connected, onserver==true and at is unexpectly Epoch */
-            boolean serverDeleted = (client.isConnected() && onserver == true && at != null &&
+            boolean serverDeleted = (client.isConnected() && onServer == true && at != null &&
                     at.getDate().getTime() == 0 && at.getSize() == 0);
 
             // is dir in server was deleted, repair onserver property
             if (serverDeleted) {
-                onserver = false;
+                onServer = false;
             }
             // if dir was delete in server and in cache, delete it item from parent
             if (cacheDeleted && serverDeleted) {
@@ -526,45 +524,45 @@ public class RemoteFile {
             //System.out.println("RemoteFile.refresh: serverlast="+attrib.getDate().toString());
             //if (at!=null) System.out.println("RemoteFile.refresh: serverreal="+at.getDate().toString()+" onserver="+onserver);
 
-            boolean serverchanged = false;
-            RemoteFileAttributes newattr = null;
+            boolean serverChanged = false;
+            RemoteFileAttributes newAttr = null;
             if (notify.isRefreshServer() && client.isConnected()) {
                 if (at == null && notify.isAlwaysRefresh()) {
-                    newattr = getFileAttributes();
+                    newAttr = getFileAttributes();
                 } else {
-                    newattr = at;
+                    newAttr = at;
                 }
-                if (newattr != null) {
+                if (newAttr != null) {
                     // if onserver==true but newattr says that file exist on server
-                    if (!onserver && !(newattr.getDate().getTime() == 0 && newattr.getSize() == 0)) {
-                        onserver = true;
-                        serverchanged = true;
+                    if (!onServer && !(newAttr.getDate().getTime() == 0 && newAttr.getSize() == 0)) {
+                        onServer = true;
+                        serverChanged = true;
                     } else {
-                        if (onserver) {
+                        if (onServer) {
                             // date of this file isn't yet known
-                            if (attrib.getSize() == newattr.getSize() && attrib.getDate().getTime() == 0) {
-                                attrib.setDate(newattr.getDate());
+                            if (attrib.getSize() == newAttr.getSize() && attrib.getDate().getTime() == 0) {
+                                attrib.setDate(newAttr.getDate());
                             }
                             // if both files are empty
-                            if (attrib.getSize() == 0 && newattr.getSize() == 0) {
-                                serverchanged = false;
+                            if (attrib.getSize() == 0 && newAttr.getSize() == 0) {
+                                serverChanged = false;
                             } else // if size or date differ
-                            if (attrib.getSize() != newattr.getSize() || !attrib.getDate().equals(newattr.getDate())) {
-                                serverchanged = true;
+                            if (attrib.getSize() != newAttr.getSize() || !attrib.getDate().equals(newAttr.getDate())) {
+                                serverChanged = true;
                             }
                         }
                     }
                 }
             }
 
-            boolean cachechanged = false;
+            boolean cacheChanged = false;
 
-            if (status == NOT_CACHED && (!file.exists() || (file.exists() && file.length() == 0))) // if file realy doesn't exist
+            if (status.equals(Status.NOT_CACHED) && (!file.exists() || (file.exists() && file.length() == 0))) // if file realy doesn't exist
             {
-                cachechanged = false;
-            } else if (file.lastModified() != cachelastmodified) {
+                cacheChanged = false;
+            } else if (file.lastModified() != cacheLastModified) {
                 // if lastmodified date was changed
-                cachechanged = true;
+                cacheChanged = true;
             /*
             System.out.println("RemoteFile.refresh: cachelast="+new Date(cachelastmodified).toString());
             System.out.println("RemoteFile.refresh: cachereal="+new Date(file.lastModified()).toString());
@@ -573,37 +571,37 @@ public class RemoteFile {
             }
 
             // file in cache was deleted if change was detected, status isn't NOT_CACHED, but file doesn't exist
-            boolean cachedeleted = cachechanged && !file.exists() && status != NOT_CACHED;
+            boolean cacheDeleted = cacheChanged && !file.exists() && !status.equals(Status.NOT_CACHED);
             // file in server was deleted if date is Epoch but onserver==true
-            boolean serverdeleted = (onserver == true && newattr != null &&
-                    newattr.getDate().getTime() == 0 && newattr.getSize() == 0);
+            boolean serverDeleted = (onServer == true && newAttr != null &&
+                    newAttr.getDate().getTime() == 0 && newAttr.getSize() == 0);
 
             // repair onserver flag
-            if (serverdeleted) {
-                onserver = false;
+            if (serverDeleted) {
+                onServer = false;
             }
 
-            if (cachedeleted && serverdeleted) {
+            if (cacheDeleted && serverDeleted) {
                 parent.deleteChild(this);
                 return;
             }
-            if (cachedeleted && !serverdeleted) {
-                status = NOT_CACHED;
-                cachelastmodified = 0;
+            if (cacheDeleted && !serverDeleted) {
+                status = Status.NOT_CACHED;
+                cacheLastModified = 0;
                 if (notify.notifyCacheExtDelete(getName().getFullName(), false)) {
                     deleteFile();
                     parent.deleteChild(this);
                 }
-                cachechanged = false;
+                cacheChanged = false;
             }
-            if (!cachedeleted && serverdeleted) {
-                if (status == NOT_CACHED) {
+            if (!cacheDeleted && serverDeleted) {
+                if (status.equals(Status.NOT_CACHED)) {
                     deleteFile();
                     parent.deleteChild(this);
                     return;
                 }
-                if (status == CACHED) {
-                    status = CHANGED;
+                if (status.equals(Status.CACHED)) {
+                    status = Status.CHANGED;
                 }
                 if (notify.notifyServerExtDelete(getName().getFullName(), false)) {
                     deleteFile();
@@ -611,56 +609,56 @@ public class RemoteFile {
                     return;
                 } else {
                     save();
-                    serverchanged = false;
+                    serverChanged = false;
                 }
             }
 
             // no modification
-            if (!serverchanged && !cachechanged) {
+            if (!serverChanged && !cacheChanged) {
                 return;
             }
             // change only in cache
-            if (cachechanged && !serverchanged) {
-                cachelastmodified = file.lastModified();
-                if (status != OPEN) {
-                    status = CHANGED;
+            if (cacheChanged && !serverChanged) {
+                cacheLastModified = file.lastModified();
+                if (!status.equals(Status.OPEN)) {
+                    status = Status.CHANGED;
                     //System.out.println("RemoteFile.refresh: file "+getPath()+" in cache has changed. Saving");
                     save(); //TODO: save on background
                 }
             }
 
             //change only on server
-            if (serverchanged && !cachechanged) {
+            if (serverChanged && !cacheChanged) {
                 switch (status) {
                     case NOT_CACHED:
-                        attrib = newattr;
+                        attrib = newAttr;
                         break;
                     case CACHED:
-                        if (notify.notifyServerChanged(getName().getFullName(), newattr.getDate(), newattr.getSize(), new Date(file.lastModified()),
+                        if (notify.notifyServerChanged(getName().getFullName(), newAttr.getDate(), newAttr.getSize(), new Date(file.lastModified()),
                                 file.length())) {
-                            attrib = newattr;
-                            status = NOT_CACHED;
+                            attrib = newAttr;
+                            status = Status.NOT_CACHED;
                             file.delete();
                             if (notify.isDownloadServerChangedFile()) {
                                 load();
                             }
                         } else {
-                            status = CHANGED;
+                            status = Status.CHANGED;
                             save();
                         }
                         break;
                     case OPEN:
                     case CHANGED:
-                        if (serverchanged && cachechanged) {
-                            int which = notify.notifyBothFilesChanged(getName().getFullName(), newattr.getDate(), newattr.getSize(),
+                        if (serverChanged && cacheChanged) {
+                            int which = notify.notifyBothFilesChanged(getName().getFullName(), newAttr.getDate(), newAttr.getSize(),
                                     new Date(file.lastModified()), file.length());
                             if (which == 0) {
-                                cachelastmodified = file.lastModified();
-                                status = CHANGED;
+                                cacheLastModified = file.lastModified();
+                                status = Status.CHANGED;
                                 save();
                             } else {
-                                attrib = newattr;
-                                status = NOT_CACHED;
+                                attrib = newAttr;
+                                status = Status.NOT_CACHED;
                                 file.delete();
                                 if (notify.isDownloadServerChangedFile()) {
                                     load();
@@ -671,16 +669,16 @@ public class RemoteFile {
                 }
             }
             //change both on server and in cache
-            if (serverchanged && cachechanged) {
-                int which = notify.notifyBothFilesChanged(getName().getFullName(), newattr.getDate(), newattr.getSize(), new Date(file.lastModified()),
+            if (serverChanged && cacheChanged) {
+                int which = notify.notifyBothFilesChanged(getName().getFullName(), newAttr.getDate(), newAttr.getSize(), new Date(file.lastModified()),
                         file.length());
                 if (which == 0) {
-                    cachelastmodified = file.lastModified();
-                    status = CHANGED;
+                    cacheLastModified = file.lastModified();
+                    status = Status.CHANGED;
                     save();
                 } else {
-                    attrib = newattr;
-                    status = NOT_CACHED;
+                    attrib = newAttr;
+                    status = Status.NOT_CACHED;
                     file.delete();
                     if (notify.isDownloadServerChangedFile()) {
                         load();
@@ -702,11 +700,11 @@ public class RemoteFile {
             // Directory 
             // if directory doesn't exist, create new
             if (!file.exists()) {
-                status = NOT_CACHED;
+                status = Status.NOT_CACHED;
                 file.mkdirs();
             }
             // if directory doesn't exist on server, create new
-            if (client.isConnected() && !onserver) {
+            if (client.isConnected() && !onServer) {
                 client.mkdir(getName());
             }
             // TODO: realy always getchildren? , or only on CACHED?
@@ -724,15 +722,15 @@ public class RemoteFile {
                     children[i].synchronize();
                 }
             }
-            onserver = true;
+            onServer = true;
         } // File
         else {
             // refresh();  // Not necessary because refresh is called in getChildren, 
             // but in this case first call of uploadAll must be perform on directory
             if (!file.exists()) {
-                status = NOT_CACHED;
+                status = Status.NOT_CACHED;
             }
-            if (client.isConnected() && status == CHANGED) {
+            if (client.isConnected() && status.equals(Status.CHANGED)) {
                 save();
             }
         }
@@ -750,7 +748,7 @@ public class RemoteFile {
         }
         if (isDirectory()) {
             if (!file.exists()) {
-                status = NOT_CACHED;
+                status = Status.NOT_CACHED;
                 file.mkdirs();
             }
             getChildren();
@@ -760,7 +758,7 @@ public class RemoteFile {
                 }
             }
         } else {
-            if (status == NOT_CACHED) {
+            if (status.equals(Status.NOT_CACHED)) {
                 load();
             }
         }
@@ -778,10 +776,10 @@ public class RemoteFile {
                 }
             }
         } else {
-            if (status == CACHED && file.exists()) {
-                status = NOT_CACHED;
+            if (status.equals(Status.CACHED) && file.exists()) {
+                status = Status.NOT_CACHED;
                 file.delete();
-                cachelastmodified = 0;
+                cacheLastModified = 0;
             }
         }
     }
@@ -834,7 +832,9 @@ public class RemoteFile {
     public RemoteFile find(String name) throws IOException {
         //System.out.println("RemoteFile.find: path="+getPath()+"  name="+name);
         RemoteFile remoteFile = this, newfile;
-        if (name.equals(".")) return remoteFile;
+        if (name.equals(".")) {
+            return remoteFile;
+        }
         StringTokenizer st = new StringTokenizer(name, "/");
         while (st.hasMoreTokens()) {
             String next = st.nextToken();
@@ -894,12 +894,12 @@ public class RemoteFile {
         if (isDirectory()) {
             return;
         } else {
-            if (onserver) {
+            if (onServer) {
                 //System.out.println("Downloading "+getPath()+" from server");
                 client.get(getName(), file);
-                file.setLastModified(cachelastmodified = attrib.getDate().getTime());
+                file.setLastModified(cacheLastModified = attrib.getDate().getTime());
             }
-            status = CACHED;
+            status = Status.CACHED;
         }
     }
 
@@ -911,25 +911,25 @@ public class RemoteFile {
         //System.out.println("RemoteFile.save: path="+getPath());
         if (isDirectory()) {
             // TODO: ???
-        } else if (status == CHANGED || status == OPEN) {
-            status = CHANGED;
+        } else if (status.equals(Status.CHANGED) || status.equals(Status.OPEN)) {
+            status = Status.CHANGED;
             if (!client.isConnected()) {
                 return;
             }
             //System.out.println("Uploading "+getPath()+" to server");
             client.put(file, getName());
-            cachelastmodified = file.lastModified();
+            cacheLastModified = file.lastModified();
             attrib.setSize(file.length());
             RemoteFileAttributes rfa = getFileAttributes();
             if (rfa != null) {
                 attrib.setDate(rfa.getDate());
                 file.setLastModified(rfa.getDate().getTime());
-                cachelastmodified = rfa.getDate().getTime();
+                cacheLastModified = rfa.getDate().getTime();
             } else {
                 attrib.setDate(new Date(0));
             } // TODO: get time from server? 
-            status = CACHED;
-            onserver = true;
+            status = Status.CACHED;
+            onServer = true;
         //System.out.println("RemoteFile.save: end. path="+getPath());
         }
     }
@@ -944,7 +944,7 @@ public class RemoteFile {
             throw new FileNotFoundException("Can't get inputstream from directory " + file.getPath());
         }
         refresh();
-        if (status == NOT_CACHED) {
+        if (status.equals(Status.NOT_CACHED)) {
             load();
         }
         if (!file.exists()) {
@@ -964,7 +964,7 @@ public class RemoteFile {
             throw new IOException("Can't get outputstream from directory " + file.getPath());
         }
         refresh();
-        status = OPEN;
+        status = Status.OPEN;
         return new RemoteOutputStream(this);
     }
 
@@ -976,7 +976,7 @@ public class RemoteFile {
     public long getSize() throws IOException {
         //TODO: if size isn't known
         refresh();
-        if (status == CHANGED) {
+        if (status.equals(Status.CHANGED)) {
             return file.length();
         }
         return attrib.getSize();
@@ -999,8 +999,8 @@ public class RemoteFile {
     public Date lastModified() throws IOException {
         //TODO: if data isn't known
         refresh();
-        if (status != NOT_CACHED) {
-            return new Date(cachelastmodified);
+        if (!status.equals(Status.NOT_CACHED)) {
+            return new Date(cacheLastModified);
         } else {
             return attrib.getDate();
         }
@@ -1012,13 +1012,13 @@ public class RemoteFile {
      */
     protected void deleteFile() throws IOException {
         if (isDirectory()) {
-            if (status == NOT_CACHED) {
+            if (status.equals(Status.NOT_CACHED)) {
                 getChildren();
             }
             for (int i = 0; i < children.length; i++) {
                 // if this file doesn't exist on server, set correct onserver also for child
-                if (!onserver) {
-                    children[i].onserver = false;
+                if (!onServer) {
+                    children[i].onServer = false;
                 }
                 if (children[i] != null) {
                     children[i].deleteFile();
@@ -1027,10 +1027,10 @@ public class RemoteFile {
             children = new RemoteFile[0];
             childrenChanged = true;
             childrenList.clear();
-            if (onserver && client.isConnected()) {
+            if (onServer && client.isConnected()) {
                 client.rmdir(getName());
             }
-        } else if (onserver && client.isConnected()) {
+        } else if (onServer && client.isConnected()) {
             client.delete(getName());
         }
         if (file.exists()) {
@@ -1074,7 +1074,7 @@ public class RemoteFile {
         if (client.isConnected()) {
             client.rename(getName(), name);
         } else {
-            onserver = false;
+            onServer = false;
         } // TODO: ???
         attrib.getName().setName(name);
         File tmp = new File(file.getParentFile(), name);
@@ -1155,5 +1155,10 @@ public class RemoteFile {
     protected interface RequestProcessor {
 
         public void post(Runnable run);
+    }
+
+    static enum Status {
+
+        NOT_CACHED, CACHED, OPEN, CHANGED
     }
 }
