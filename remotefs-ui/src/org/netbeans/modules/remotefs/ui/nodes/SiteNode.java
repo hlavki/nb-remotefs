@@ -21,8 +21,8 @@ import org.openide.nodes.Node;
 import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
 import org.openide.util.actions.NodeAction;
 import org.openide.util.actions.SystemAction;
 
@@ -46,9 +46,9 @@ public class SiteNode extends FilterNode {
     public Image getIcon(int type) {
         Image icon = null;
         if (site.isConnected()) {
-            icon = Utilities.loadImage(ICON_CONNECTED_PATH);
+            icon = ImageUtilities.loadImage(ICON_CONNECTED_PATH);
         } else {
-            icon = Utilities.loadImage(ICON_DISCONNECTED_PATH);
+            icon = ImageUtilities.loadImage(ICON_DISCONNECTED_PATH);
         }
         return icon;
     }

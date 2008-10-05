@@ -19,10 +19,10 @@ import org.netbeans.modules.remotefs.ui.resources.Bundle;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
-import org.openide.util.Utilities;
 import org.openide.util.actions.SystemAction;
 
 /**
@@ -41,7 +41,7 @@ final class RemoteFSExplorerTopComponent extends TopComponent implements Explore
         initComponents();
         setName(NbBundle.getMessage(Bundle.class, "CTL_RemoteFSExplorerTopComponent"));
         setToolTipText(NbBundle.getMessage(Bundle.class, "HINT_RemoteFSExplorerTopComponent"));
-        setIcon(Utilities.loadImage(ICON_PATH, true));
+        setIcon(ImageUtilities.loadImage(ICON_PATH, true));
         List<RemoteFileSystemInfo> fsInfos = RemoteFileSystemManager.getDefault().getRemoteFileSystems();
         explorerManager.setRootContext(new RootNode(fsInfos));
         ((BeanTreeView) view).setRootVisible(true);

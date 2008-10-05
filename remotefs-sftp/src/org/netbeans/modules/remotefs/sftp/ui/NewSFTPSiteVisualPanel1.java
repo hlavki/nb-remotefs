@@ -98,7 +98,6 @@ public class NewSFTPSiteVisualPanel1 extends javax.swing.JPanel {
 
         rootFolderLabel.setText(org.openide.util.NbBundle.getMessage(Bundle.class, "NewSFTPSiteVisualPanel1.rootFolderLabel.text")); // NOI18N
 
-        rootFolderTextField.setEditable(false);
         rootFolderTextField.setToolTipText(org.openide.util.NbBundle.getMessage(Bundle.class, "NewSFTPConnectionVisualPanel1.rootFolderTestLabel.toolTipText")); // NOI18N
         rootFolderTextField.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {

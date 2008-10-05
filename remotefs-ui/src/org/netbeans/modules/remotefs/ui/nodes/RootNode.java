@@ -9,8 +9,8 @@ import java.util.List;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
 import org.netbeans.modules.remotefs.ui.resources.Bundle;
 import org.openide.nodes.AbstractNode;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
 
 /**
  *
@@ -28,7 +28,7 @@ public class RootNode extends AbstractNode {
 
     @Override
     public Image getIcon(int type) {
-        return Utilities.loadImage(ICON_PATH);
+        return ImageUtilities.loadImage(ICON_PATH);
     }
 
     @Override

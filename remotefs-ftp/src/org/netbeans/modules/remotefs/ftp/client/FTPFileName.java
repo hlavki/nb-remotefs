@@ -78,7 +78,6 @@ public class FTPFileName implements RemoteFileName {
      * @return  full name*/
     public String getFullName() {
         String path = (directory.equals("/") ? "" : directory) + (name.equals("/") ? "" : "/") + name;
-        System.out.println("Full name: " + path);
         return path;
     }
 

@@ -21,8 +21,8 @@ import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.netbeans.modules.remotefs.sftp.ui.NewSFTPSiteWizardAction;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
 import org.openide.util.actions.CallableSystemAction;
 
 /**
@@ -33,24 +33,14 @@ public class SFTPFileSystemInfo implements RemoteFileSystemInfo {
 
     private static final String PROP_DISPLAY_NAME = "FileSystemInfo.displayName";
     private static final String ICON_PATH = "org/netbeans/modules/remotefs/sftp/resources/globe-sextant-16x16.png";
-    private static final Set<String> SUPPORTED_PROTOCOLS = new HashSet<String>(Arrays.asList(new String[]{"sftp"}));
+    private static final Set<String> SUPPORTED_PROTOCOLS = new HashSet<String>(Arrays.asList(new String[]{"sftp", "scp"}));
 
     public String getDisplayName() {
         return NbBundle.getMessage(Bundle.class, PROP_DISPLAY_NAME);
     }
 
     public Image getIcon() {
-        return Utilities.loadImage(ICON_PATH);
-    }
-
-    public List<RemoteFileSystem> getConnections() {
-        SFTPLogInfo logInfo = new SFTPLogInfo("localhost", "astar");
-        try {
-            LogInfoList.getDefault().add(logInfo);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        return Collections.<RemoteFileSystem>singletonList(new SFTPFileSystem(logInfo));
+        return ImageUtilities.loadImage(ICON_PATH);
     }
 
     public HelpCtx getHelp() {

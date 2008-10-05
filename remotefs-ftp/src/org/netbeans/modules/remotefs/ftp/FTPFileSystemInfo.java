@@ -18,8 +18,8 @@ import org.netbeans.modules.remotefs.ftp.client.FTPLogInfo;
 import org.netbeans.modules.remotefs.ftp.resources.Bundle;
 import org.netbeans.modules.remotefs.ftp.ui.NewFTPSiteWizardAction;
 import org.openide.util.HelpCtx;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
 import org.openide.util.actions.CallableSystemAction;
 
 /**
@@ -37,7 +37,7 @@ public class FTPFileSystemInfo implements RemoteFileSystemInfo {
     }
 
     public Image getIcon() {
-        return Utilities.loadImage(ICON_PATH);
+        return ImageUtilities.loadImage(ICON_PATH);
     }
 
     public List<RemoteFileSystem> getConnections() {

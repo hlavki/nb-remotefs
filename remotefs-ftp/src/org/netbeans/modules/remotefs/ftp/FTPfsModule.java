@@ -39,7 +39,6 @@
  *
  * Contributor(s): Libor Martinek.
  */
-
 package org.netbeans.modules.remotefs.ftp;
 
 import org.openide.modules.ModuleInstall;
@@ -50,33 +49,20 @@ import org.openide.modules.ModuleInstall;
  * @version 1.0
  */
 public class FTPfsModule extends ModuleInstall {
-  static final long serialVersionUID = 2289861663533516525L;
 
-  public FTPfsModule() {
-    // A public default constructor is required!
-    // Of course, Java makes one by default for a public class too.
-  }
+    private static final long serialVersionUID = -5390393856512561659L;
 
-  public void installed() {
-    // This module has been installed for the first time! Notify authors.
-    // Handle setup within this session too:
-    restored();
-  }
+    public FTPfsModule() {
+        // A public default constructor is required!
+        // Of course, Java makes one by default for a public class too.
+    }
 
-  public void restored() {
-    //FileUtil.setMIMEType("test", "text/x-clipboard-content-test");
-  }
-
-  public void uninstalled() {
-    // Do not need to do anything special on uninstall.
-    // Action will already be removed from Edit menu automatically.
-  }
-
-  public boolean closing() {
-    // Ask the user to save any open, modified clipboard contents.
-    // If the user selects "Cancel" on one of these dialogs, don't exit yet!
-    //return DisplayClipboardAction.askAboutExiting();
-    return true;
-  }
+    @Override
+    public boolean closing() {
+        // Ask the user to save any open, modified clipboard contents.
+        // If the user selects "Cancel" on one of these dialogs, don't exit yet!
+        //return DisplayClipboardAction.askAboutExiting();
+        return true;
+    }
 }
 

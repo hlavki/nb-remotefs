@@ -257,7 +257,7 @@ public class RemoteFile {
     /** Get all children of this object
      * @return array of children
      */
-    public synchronized RemoteFile[] getChildren() {
+    public synchronized RemoteFile[] getChildrenAsync() {
         childrenChanged = false;
         if (nextNoChildren) {
             nextNoChildren = false;
@@ -279,6 +279,24 @@ public class RemoteFile {
             }
         });
 
+        return children;
+    }
+
+    public synchronized RemoteFile[] getChildren() {
+        childrenChanged = false;
+        if (nextNoChildren) {
+            nextNoChildren = false;
+            return children;
+        }
+        try {
+            getChildrenBlock();
+        } catch (IOException e) {
+            notify.notifyException(e);
+        }
+        if (childrenChanged) {
+            nextNoChildren = true;
+            notify.fileChanged(getName().getFullName());
+        }
         return children;
     }
 
@@ -835,7 +853,7 @@ public class RemoteFile {
         if (name.equals(".")) {
             return remoteFile;
         }
-        StringTokenizer st = new StringTokenizer(name, "/");
+        StringTokenizer st = new StringTokenizer(name, PATH_SEP);
         while (st.hasMoreTokens()) {
             String next = st.nextToken();
             newfile = remoteFile.getExistingChild(next);

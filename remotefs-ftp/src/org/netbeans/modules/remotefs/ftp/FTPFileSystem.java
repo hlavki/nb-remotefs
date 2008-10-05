@@ -55,7 +55,6 @@ import org.netbeans.modules.remotefs.ftp.client.FTPLogInfo;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.FileUtil;
 import org.openide.filesystems.Repository;
 import org.openide.options.SystemOption;
 import org.openide.util.Exceptions;

@@ -6,6 +6,7 @@ package org.netbeans.modules.remotefs.sftp;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -96,6 +97,87 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
      */
     public String getServer() {
         return ((SFTPLogInfo) logInfo).getHost();
+    }
+
+    /** Set server name.
+     */
+    public void setServer(String host) {
+        ((SFTPLogInfo) logInfo).setHost(host);
+        // TODO: property changed
+    }
+
+    /** Get the number of port.
+     * @return Value of property port.
+     */
+    public int getPort() {
+        return ((SFTPLogInfo) logInfo).getPort();
+    }
+
+    /** Set port number.
+     * @param port New value of property port.
+     * @throws PropertyVetoException
+     */
+    public void setPort(int port) throws java.beans.PropertyVetoException {
+        ((SFTPLogInfo) logInfo).setPort(port);
+        // TODO: property changed
+    }
+
+    /** Get user name.
+     * @return Value of property username.
+     */
+    public String getUsername() {
+        return ((SFTPLogInfo) logInfo).getUser();
+    }
+
+    /** Set user name.
+     * @param username New value of property username.
+     * @throws java.beans.PropertyVetoException
+     */
+    public void setUsername(String username) throws PropertyVetoException {
+        ((SFTPLogInfo) logInfo).setUser(username);
+        // TODO: property changed
+    }
+
+    /** Get password.
+     * @return Value of property password.
+     */
+    public String getPassword() {
+        return ((SFTPLogInfo) logInfo).getPassword();
+    }
+
+    /** Set password.
+     * @param password
+     * @throws java.beans.PropertyVetoException
+     */
+    public void setPassword(String password) throws PropertyVetoException {
+        ((SFTPLogInfo) logInfo).setPassword(password);
+        // TODO: property changed
+    }
+
+    /** Get starting directory.
+     * @return Value of property startdir.
+     */
+    public String getStartDir() {
+        return startDir;
+    }
+
+    /** Set starting directory.
+     * @param startdir New value of property startdir.
+     */
+    public void setStartDir(String startDir) {
+        String newStartDir = startDir;
+        if (startDir == null || startDir.equals("/") || startDir.equals("")) {
+            newStartDir = "/";
+        } else {
+            if (!startDir.startsWith("/")) {
+                newStartDir = "/" + startDir;
+            }
+            if (newStartDir.endsWith("/")) {
+                newStartDir = newStartDir.substring(0, newStartDir.length() - 1);
+            }
+        }
+        this.startDir = newStartDir;
+        removeClient();
     }
 
     /** Get SFTPSettings object

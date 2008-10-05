@@ -48,6 +48,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.filesystems.AbstractFileSystem;
 import org.openide.filesystems.DefaultAttributes;
 import org.openide.filesystems.FileObject;
@@ -84,8 +86,6 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     protected LogInfo logInfo;
     /** is read only */
     protected boolean readOnly;
-    /** Request processor */
-    protected transient RequestProcessor requestProc;
 
     /** Constructor.
      */
@@ -691,9 +691,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** Run in Request Processor.
      * @param run  */
     public void post(Runnable run) {
-        if (requestProc == null) {
-            requestProc = new RequestProcessor("Remote Filesystem Request Processor for " + logInfo.getDisplayName());
-        }
-        requestProc.post(run);
+        RequestProcessor processor = RequestProcessor.getDefault();
+        processor.post(run);
     }
 } 

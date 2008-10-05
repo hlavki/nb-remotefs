@@ -15,8 +15,8 @@ import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
+import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
 import org.openide.util.actions.CallableSystemAction;
 
 /**
@@ -32,7 +32,8 @@ public final class NewFTPSiteWizardAction extends CallableSystemAction {
     private static NewFTPSiteWizardAction instance;
 
     private NewFTPSiteWizardAction() {
-        putValue(SMALL_ICON, new ImageIcon(Utilities.loadImage("org/netbeans/modules/remotefs/ftp/resources/globe-sextant-16x16.png")));
+        putValue(SMALL_ICON, new ImageIcon(
+                ImageUtilities.loadImage("org/netbeans/modules/remotefs/ftp/resources/globe-sextant-16x16.png")));
     }
 
     public static CallableSystemAction getInstance() {

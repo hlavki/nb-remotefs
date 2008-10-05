@@ -5,7 +5,6 @@
 package org.netbeans.modules.remotefs.api;
 
 import java.awt.Image;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import org.openide.util.HelpCtx;
@@ -19,8 +18,6 @@ public interface RemoteFileSystemInfo {
     String getDisplayName();
 
     Image getIcon();
-
-    List<RemoteFileSystem> getConnections();
 
     HelpCtx getHelp();
 
