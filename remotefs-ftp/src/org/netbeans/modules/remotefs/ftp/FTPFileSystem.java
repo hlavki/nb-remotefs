@@ -56,7 +56,6 @@ import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.Repository;
-import org.openide.options.SystemOption;
 import org.openide.util.Exceptions;
 
 /** FTP FIleSystem class
@@ -72,7 +71,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     /** Whether user already entered cache directory. */
     private boolean enteredcachedir = false;
     /** Global FTP FileSystem settings */
-    private FTPSettings ftpsettings = SystemOption.findObject(FTPSettings.class, true);
+    private FTPSettings ftpsettings = FTPSettings.getDefault();
     static final String CACHE_FOLDER_NAME = "ftpcache";
 
 
@@ -141,7 +140,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     protected FTPSettings getFTPSettings() {
         if (ftpsettings == null) {
             System.out.println("FTPSETTTNGS NULL");
-            ftpsettings = SystemOption.findObject(FTPSettings.class, true);
+            ftpsettings = FTPSettings.getDefault();
         }
         return ftpsettings;
     }
@@ -427,11 +426,11 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     }
 
     public boolean isAlwaysRefresh() {
-        return getFTPSettings().isRefreshAlways();
+        return getFTPSettings().isAlwaysRefresh();
     }
 
     public void setAlwaysRefresh(boolean alwaysRefresh) {
-        getFTPSettings().setRefreshAlways(alwaysRefresh);
+        getFTPSettings().setAlwaysRefresh(alwaysRefresh);
     }
 
     public boolean isDownloadServerChangedFile() {
