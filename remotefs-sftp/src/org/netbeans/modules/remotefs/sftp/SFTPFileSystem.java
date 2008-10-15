@@ -20,7 +20,6 @@ import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.Repository;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
@@ -48,48 +47,18 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     private static final Logger log = Logger.getLogger(SFTPFileSystem.class.getName());
     /** Global FTP FileSystem settings */
     private SFTPSettings settings;
-    /** Name of temporary directoty (if user doesn't entry own one) */
-    private static final String SFTP_WORK;
-    private static final String CACHE_FOLDER_NAME = "sftpcache";
-
-
-    static {
-        /* BUGFIX for issue #123552
-         * We need a default cache dir. 
-         * The default is "ftpcache" in the filesystem's root. Must be created if it doesn't exist.
-         */
-        FileObject fr = Repository.getDefault().getDefaultFileSystem().getRoot();
-        FileObject fo = fr.getFileObject(CACHE_FOLDER_NAME);
-        if (fo == null) {
-            try {
-                fo = fr.createFolder(CACHE_FOLDER_NAME);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        SFTP_WORK = fo.getName();
-    }
 
     public SFTPFileSystem(SFTPLogInfo logInfo) {
-        super();
+        super(logInfo);
         this.settings = SFTPSettings.getDefault();
-        this.logInfo = logInfo;
         setRefreshTime(getSFTPSettings().getRefreshTime());
         startDir = logInfo.getRootFolder();
-        cacheDir = new File(getDefaultCache());
         getSFTPSettings().addPropertyChangeListener(new PropertyChangeListener() {
 
             public void propertyChange(PropertyChangeEvent event) {
                 sftpSettingsChanged(event);
             }
         });
-    }
-
-    /** Get the cache directory.
-     * @return root directory
-     */
-    public File getCache() {
-        return cacheDir;
     }
 
     /** Get server name.
@@ -103,7 +72,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
      */
     public void setServer(String host) {
         ((SFTPLogInfo) logInfo).setHost(host);
-        // TODO: property changed
+    // TODO: property changed
     }
 
     /** Get the number of port.
@@ -119,7 +88,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
      */
     public void setPort(int port) throws java.beans.PropertyVetoException {
         ((SFTPLogInfo) logInfo).setPort(port);
-        // TODO: property changed
+    // TODO: property changed
     }
 
     /** Get user name.
@@ -135,7 +104,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
      */
     public void setUsername(String username) throws PropertyVetoException {
         ((SFTPLogInfo) logInfo).setUser(username);
-        // TODO: property changed
+    // TODO: property changed
     }
 
     /** Get password.
@@ -151,7 +120,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
      */
     public void setPassword(String password) throws PropertyVetoException {
         ((SFTPLogInfo) logInfo).setPassword(password);
-        // TODO: property changed
+    // TODO: property changed
     }
 
     /** Get starting directory.
@@ -177,7 +146,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
             }
         }
         this.startDir = newStartDir;
-        ((SFTPLogInfo)logInfo).setRootFolder(newStartDir);
+        ((SFTPLogInfo) logInfo).setRootFolder(newStartDir);
         removeClient();
     }
 
@@ -192,13 +161,6 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
         return logInfo.getDisplayName();
     }
 
-    private String getDefaultCache() {
-        SFTPLogInfo sftpLogInfo = (SFTPLogInfo) logInfo;
-        return SFTP_WORK + File.separator + sftpLogInfo.getHost() +
-                ((sftpLogInfo.getPort() == SFTPClient.DEFAULT_PORT) ? "" : ("_" + String.valueOf(sftpLogInfo.getPort()))) +
-                "_" + sftpLogInfo.getUser();
-    }
-
     private void sftpSettingsChanged(PropertyChangeEvent event) {
         log.fine("SFTP settings changed...");
         if (event.getPropertyName().equals(SFTPSettings.PROP_REFRESH_TIME)) {
@@ -207,8 +169,7 @@ public class SFTPFileSystem extends RemoteFileSystem implements SFTPClient.Recon
     }
 
     @Override
-    public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
-        cacheDir = getCacheRootDirectory(CACHE_FOLDER_NAME);
+    public RemoteClient createClient(LogInfo loginfo, FileObject cache) throws IOException {
         SFTPClient sftpClient = new SFTPClient((SFTPLogInfo) loginfo);
         sftpClient.setReconnect(this);
         return sftpClient;

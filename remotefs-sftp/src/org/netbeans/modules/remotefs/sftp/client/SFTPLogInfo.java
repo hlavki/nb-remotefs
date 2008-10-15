@@ -29,8 +29,6 @@ import org.openide.util.Exceptions;
  */
 public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteractive, Comparable<LogInfo> {
 
-    private static final String PROP_HOST = "host";
-    private static final String PROP_PORT = "port";
     private static final String PROP_USER = "user";
     private static final String PROP_PASSWORD = "password";
     private static final String PROP_KEY_FILE = "keyFile";
@@ -76,21 +74,6 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
         passwordField = new JPasswordField(20);
     }
 
-    /**
-     * Get hostname
-     * @return hostname
-     */
-    public String getHost() {
-        return data.getProperty(PROP_HOST);
-    }
-
-    /**
-     * Set hostname
-     * @param host hostname
-     */
-    public void setHost(String host) {
-        setProperty(PROP_HOST, host);
-    }
 
     /**
      * Get password
@@ -106,23 +89,6 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
      */
     public void setPassword(String password) {
         setProperty(PROP_PASSWORD, password);
-    }
-
-    /**
-     * Get port nubmer
-     * @return port number
-     */
-    public Integer getPort() {
-        String value = data.getProperty(PROP_PORT);
-        return value != null ? Integer.valueOf(value) : null;
-    }
-
-    /**
-     * Set port number
-     * @param port port nubmer
-     */
-    public void setPort(Integer port) {
-        setProperty(PROP_PORT, port.toString());
     }
 
     /**

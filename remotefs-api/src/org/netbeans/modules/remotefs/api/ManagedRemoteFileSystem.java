@@ -56,8 +56,8 @@ public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
 
     /** Constructor.
      */
-    public ManagedRemoteFileSystem() {
-        super();
+    public ManagedRemoteFileSystem(LogInfo logInfo) {
+        super(logInfo);
     }
 
     @Override

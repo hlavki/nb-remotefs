@@ -55,6 +55,8 @@ public abstract class LogInfo implements java.io.Serializable {
     public static final String PROP_NAME = "name";
     public static final String PROP_PROTOCOL = "protocol";
     public static final String PROP_INSTANCE_CLASS = "instanceClass";
+    public static final String PROP_HOST = "host";
+    public static final String PROP_PORT = "port";
     protected Properties data;
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -64,6 +66,39 @@ public abstract class LogInfo implements java.io.Serializable {
 
     protected LogInfo(Properties data) {
         this.data = data;
+    }
+
+    /**
+     * Get hostname
+     * @return hostname
+     */
+    public String getHost() {
+        return data.getProperty(PROP_HOST);
+    }
+
+    /**
+     * Set hostname
+     * @param host hostname
+     */
+    public void setHost(String host) {
+        setProperty(PROP_HOST, host);
+    }
+
+    /**
+     * Get port nubmer
+     * @return port number
+     */
+    public Integer getPort() {
+        String value = data.getProperty(PROP_PORT);
+        return value != null ? Integer.valueOf(value) : null;
+    }
+
+    /**
+     * Set port number
+     * @param port port nubmer
+     */
+    public void setPort(Integer port) {
+        setProperty(PROP_PORT, port.toString());
     }
 
     /** Return human redable description of this LogInfo
@@ -103,7 +138,11 @@ public abstract class LogInfo implements java.io.Serializable {
 
     public final void setProperty(String key, String value) {
         String oldValue = data.getProperty(key);
-        data.setProperty(key, value);
+        if (value == null) {
+            data.remove(key);
+        } else {
+            data.setProperty(key, value);
+        }
         propertyChangeSupport.firePropertyChange(key, oldValue, value);
     }
 }

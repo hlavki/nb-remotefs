@@ -5,21 +5,15 @@
 package org.netbeans.modules.remotefs.sftp;
 
 import java.awt.Image;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import org.netbeans.modules.remotefs.api.LogInfo;
-import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.api.RemoteFileSystemInfo;
-import org.netbeans.modules.remotefs.api.LogInfoList;
 import org.netbeans.modules.remotefs.sftp.client.SFTPLogInfo;
 import org.netbeans.modules.remotefs.sftp.resources.Bundle;
 import org.netbeans.modules.remotefs.sftp.ui.NewSFTPSiteWizardAction;
-import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;

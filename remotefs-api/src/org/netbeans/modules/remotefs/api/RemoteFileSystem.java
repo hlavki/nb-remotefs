@@ -48,6 +48,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.netbeans.modules.remotefs.api.config.RemoteFsCacheProvider;
 import org.openide.filesystems.AbstractFileSystem;
 import org.openide.filesystems.DefaultAttributes;
 import org.openide.filesystems.FileObject;
@@ -68,6 +69,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         RemoteFile.Notify, RemoteFile.RequestProcessor {
 
     private static final Logger log = Logger.getLogger(RemoteFileSystem.class.getName());
+    private static final String NB_USER_DIR = "netbeans.user";   //NOI18N
     protected static final String DEFAULT_ROOT_DIR = "/";
     private static final String DEFAULT_SEPARATOR = "/";
     /** remote client */
@@ -75,7 +77,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** root file */
     protected transient RemoteFile rootFile;
     /** Root of cache directory */
-    protected File cacheDir = null;
+    protected FileObject cacheDir = null;
     /** Server start directory */
     protected String startDir = DEFAULT_ROOT_DIR;
     /** path separator */
@@ -87,12 +89,18 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
 
     /** Constructor.
      */
-    public RemoteFileSystem() {
+    public RemoteFileSystem(LogInfo logInfo) {
         info = this;
         change = this;
+        this.logInfo = logInfo;
         DefaultAttributes a = new DefaultAttributes(info, change, this);
         attr = a;
         list = a;
+        try {
+            cacheDir = new RemoteFsCacheProvider(logInfo).getCacheDirectory();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 
     /** Return system action for this filesystem
@@ -196,20 +204,18 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         return logInfo.getNodeProperties(this);
     }
 
-    /**
-     * Return file directed to root directory of cache.
-     * @param cacheDirName
-     * @return
-     * @throws java.io.IOException
+    /** Get the cache directory.
+     * @return root directory
      */
-    protected final File getCacheRootDirectory(String cacheDirName) throws IOException {
-        FileObject fr = Repository.getDefault().getDefaultFileSystem().getRoot();
-        FileObject fsCache = fr.getFileObject(cacheDirName);
-        FileObject fo = fsCache.getFileObject(this.cacheDir.getName());
-        if (fo == null) {
-            fo = fsCache.createFolder(this.cacheDir.getName());
-        }
-        return FileUtil.toFile(fo);
+    public FileObject getCache() {
+        return cacheDir;
+    }
+
+    /** Get the cache directory.
+     * @return root directory
+     */
+    public File getCacheAsFile() {
+        return FileUtil.toFile(cacheDir);
     }
 
     /** Create new client
@@ -217,15 +223,15 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @param cache
      * @throws IOException
      * @return  */
-    public abstract RemoteClient createClient(LogInfo loginfo, File cache) throws IOException;
+    public abstract RemoteClient createClient(LogInfo loginfo, FileObject cache) throws IOException;
 
     /** Create new root file
      * @param client
      * @param cache
      * @throws IOException
      * @return  */
-    public RemoteFile createRootFile(RemoteClient client, File cache) throws IOException {
-        return new RemoteFile(client, this, this, cache);
+    public RemoteFile createRootFile(RemoteClient client, FileObject cache) throws IOException {
+        return new RemoteFile(client, this, this, FileUtil.toFile(cache));
     }
 
     /** Set whether the file system should be read only.

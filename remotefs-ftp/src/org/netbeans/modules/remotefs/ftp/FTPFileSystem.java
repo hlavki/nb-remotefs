@@ -104,12 +104,10 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
      * Constructor.
      * @param info
      */
-    public FTPFileSystem(FTPLogInfo info) {
-        super();
-        logInfo = info;
+    public FTPFileSystem(FTPLogInfo logInfo) {
+        super(logInfo);
         setRefreshTime(getFTPSettings().getRefreshTime());
-        startDir = info.getRootFolder();
-        cacheDir = new File(getDefaultCache());
+        startDir = logInfo.getRootFolder();
         getFTPSettings().addPropertyChangeListener(new PropertyChangeListener() {
 
             public void propertyChange(PropertyChangeEvent event) {
@@ -156,40 +154,29 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
         return logInfo.getDisplayName();// + ((startdir != null && startdir.startsWith("/")) ? "" : "/") + startdir;
     }
 
-    private String getDefaultCache() {
-        return FTPWORK + File.separator + ((FTPLogInfo) logInfo).getHost() + ((((FTPLogInfo) logInfo).getPort() == FTPClient.DEFAULT_PORT) ? "" : ("_" + String.valueOf(((FTPLogInfo) logInfo).getPort()))) + "_" + ((FTPLogInfo) logInfo).getUser();
-    }
-
     //****************************************************************************
     /** Set cache directory
      * @param r 
      * @throws java.beans.PropertyVetoException 
      * @exception IOException
      */
-    public void setCache(File r) throws PropertyVetoException, IOException {
-        if (r == null) {
-            throw new IOException("Cache root directory can't be null");
-        }
-        if (!r.exists()) {
-            if (!r.mkdirs()) {
-                throw new IOException("Cache root directory can't be created");
-            }
-        } else if (!r.isDirectory()) {
-            throw new IOException("Cache root is not director");
-        }
-        if (!r.canWrite() || !r.canRead()) {
-            throw new IOException("Can't read from or write to cache directory");
-        }
-        cacheDir = r;
-        enteredcachedir = true;
-        firePropertyChange("cache", null, cacheDir); // NOI18N
-    }
-
-    /** Get the cache directory.
-     * @return root directory
-     */
-    public File getCache() {
-        return cacheDir;
+    public void setCache(FileObject cacheDir) throws PropertyVetoException, IOException {
+//        if (cacheDir == null) {
+//            throw new IOException("Cache root directory can't be null");
+//        }
+//        if (!cacheDir.exists()) {
+//            if (!cacheDir.mkdirs()) {
+//                throw new IOException("Cache root directory can't be created");
+//            }
+//        } else if (!cacheDir.isDirectory()) {
+//            throw new IOException("Cache root is not director");
+//        }
+//        if (!cacheDir.canWrite() || !cacheDir.canRead()) {
+//            throw new IOException("Can't read from or write to cache directory");
+//        }
+//        cacheDir = cacheDir;
+//        enteredcachedir = true;
+//        firePropertyChange("cache", null, cacheDir); // NOI18N
     }
 
     /** Get server name.
@@ -285,9 +272,6 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
 
     /** Called when some parameter was changed. If connection is established, it must be reconnected. */
     private void propChanged() throws PropertyVetoException {
-        if (!enteredcachedir) {
-            cacheDir = new File(getDefaultCache());
-        }
         removeClient();
         if (isConnected()) {
             connectOnBackground(true);
@@ -305,8 +289,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     /** Creates FTPClient and sets its parameters
      * @throws java.io.IOException 
      */
-    public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException {
-        cacheDir = getCacheRootDirectory(CACHE_FOLDER_NAME);
+    public RemoteClient createClient(LogInfo loginfo, FileObject cache) throws IOException {
         FTPClient lClient = new FTPClient((FTPLogInfo) loginfo);
         lClient.setReconnect(this);
         lClient.setPassiveMode(getFTPSettings().isPassiveMode());

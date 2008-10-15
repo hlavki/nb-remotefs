@@ -43,6 +43,7 @@ package org.netbeans.modules.remotefs.api;
 
 import java.util.*;
 import java.io.*;
+import org.openide.filesystems.FileObject;
 
 /** RemoteManger holds static table of created managers, client,
  * cache file and  root file.
@@ -57,7 +58,7 @@ public final class RemoteManager {
     /** List of Objects that own this FTPManager */
     private List<RemoteOwner> owners = new ArrayList<RemoteOwner>();
     /** Cache directory */
-    private File cacheroot = null;
+    private FileObject cacheRoot = null;
     /** Root directory */
     private RemoteFile root = null;
     private RemoteClient client;
@@ -67,13 +68,10 @@ public final class RemoteManager {
      * @param loginfo log info
      * @param cache cache file
      * @throws IOException  */
-    protected RemoteManager(RemoteOwner owner, LogInfo loginfo, File cache) throws IOException {
+    protected RemoteManager(RemoteOwner owner, LogInfo loginfo, FileObject cacheRoot) throws IOException {
         owners.add(owner);
-        cacheroot = cache;
-        if (!cacheroot.exists()) {
-            cacheroot.mkdirs();
-        }
-        client = owner.createClient(loginfo, cache);
+        this.cacheRoot = cacheRoot;
+        client = owner.createClient(loginfo, cacheRoot);
     //client.setLogInfo(loginfo);
     //root = RemoteFile.createRoot(this,cache);
     }
@@ -84,7 +82,7 @@ public final class RemoteManager {
      * @param owner object that uses this manager
      * @param cache cache file
      * @throws IOException  */
-    public static RemoteManager getRemoteManager(RemoteOwner owner, File cache, LogInfo loginfo) throws IOException {
+    public static RemoteManager getRemoteManager(RemoteOwner owner, FileObject cache, LogInfo loginfo) throws IOException {
         boolean managerexist = false;
         // find existing manager
         for (RemoteManager manager : managers) {
@@ -93,8 +91,8 @@ public final class RemoteManager {
                 // same
                 managerexist = true;
                 // cache must be equal
-                if (!cache.equals(manager.cacheroot)) {
-                    if (!owner.notifyIncorrectCache(manager.cacheroot)) {
+                if (!cache.equals(manager.cacheRoot)) {
+                    if (!owner.notifyIncorrectCache(manager.cacheRoot)) {
                         return null;
                     }
                 }
@@ -150,7 +148,7 @@ public final class RemoteManager {
      * @throws IOException  */
     public RemoteFile getRoot() throws IOException {
         if (root == null) {
-            root = owners.get(0).createRootFile(getClient(), cacheroot);
+            root = owners.get(0).createRootFile(getClient(), cacheRoot);
         }
         return root;
     }
@@ -175,14 +173,14 @@ public final class RemoteManager {
          * @param cache
          * @throws IOException
          * @return  created Client */
-        public RemoteClient createClient(LogInfo loginfo, File cache) throws IOException;
+        public RemoteClient createClient(LogInfo loginfo, FileObject cache) throws IOException;
 
         /** Create new root file
          * @param client
          * @param cache
          * @throws IOException
          * @return  */
-        public RemoteFile createRootFile(RemoteClient client, File cache) throws IOException;
+        public RemoteFile createRootFile(RemoteClient client, FileObject cache) throws IOException;
 
         /** Notify user that incorrect password was entered
          */
@@ -191,6 +189,6 @@ public final class RemoteManager {
         /** Notify user that another cache that existing was entered
          * @param newcache
          * @return  */
-        public boolean notifyIncorrectCache(java.io.File newcache);
+        public boolean notifyIncorrectCache(FileObject newCache);
     }
 }

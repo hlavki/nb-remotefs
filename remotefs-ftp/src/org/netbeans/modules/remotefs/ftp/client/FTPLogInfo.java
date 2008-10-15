@@ -41,6 +41,7 @@
  */
 package org.netbeans.modules.remotefs.ftp.client;
 
+import java.io.File;
 import java.util.Properties;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
@@ -58,8 +59,6 @@ public class FTPLogInfo extends LogInfo {
 
     static final long serialVersionUID = 4795532037339960289L;
     private static final String DEFAULT_PROTOCOL = "ftp";
-    private static final String PROP_HOST = "host";
-    private static final String PROP_PORT = "port";
     private static final String PROP_USER = "user";
     private static final String PROP_PASSWORD = "password";
     private static final String PROP_ROOT_FOLDER = "rootFolder";
@@ -116,22 +115,6 @@ public class FTPLogInfo extends LogInfo {
     }
 
     /**
-     * Get hostname
-     * @return hostname
-     */
-    public String getHost() {
-        return data.getProperty(PROP_HOST);
-    }
-
-    /**
-     * Set hostname
-     * @param host hostname
-     */
-    public void setHost(String host) {
-        setProperty(PROP_HOST, host);
-    }
-
-    /**
      * Get password
      * @return password
      */
@@ -145,23 +128,6 @@ public class FTPLogInfo extends LogInfo {
      */
     public void setPassword(String password) {
         setProperty(PROP_PASSWORD, password);
-    }
-
-    /**
-     * Get port nubmer
-     * @return port number
-     */
-    public Integer getPort() {
-        String value = data.getProperty(PROP_PORT);
-        return value != null ? Integer.valueOf(value) : null;
-    }
-
-    /**
-     * Set port number
-     * @param port port nubmer
-     */
-    public void setPort(Integer port) {
-        setProperty(PROP_PORT, port.toString());
     }
 
     /**
@@ -221,7 +187,7 @@ public class FTPLogInfo extends LogInfo {
     }
 
     public Node.Property[] getNodeProperties(RemoteFileSystem fs) {
-        Node.Property[] props = new Node.Property[5];
+        Node.Property[] props = new Node.Property[6];
         try {
             props[0] = new PropertySupport.Reflection<String>(fs, String.class, "server");
             props[0].setName("Server name or IP");
@@ -233,8 +199,8 @@ public class FTPLogInfo extends LogInfo {
             props[3].setName("Port");
             props[4] = new PropertySupport.Reflection<String>(fs, String.class, "startDir");
             props[4].setName("Root folder");
-//            Property prop6 = new PropertySupport.Reflection(site, File.class, "cache");
-//            prop6.setName("cache folder");
+            props[5] = new PropertySupport.Reflection<File>(fs, File.class, "getCacheAsFile", null);
+            props[5].setName("cache folder");
         } catch (NoSuchMethodException ex) {
             Exceptions.printStackTrace(ex);
         }
