@@ -70,9 +70,7 @@ public class SFTPSettings {
      * @param refreshTime new value of refreshTime
      */
     public void setRefreshTime(int refreshTime) {
-        int oldRefreshTime = getPreferences().getInt(PROP_REFRESH_TIME, DEFAULT_REFRESH_TIME);
-        getPreferences().putLong(PROP_REFRESH_TIME, refreshTime);
-        propertyChangeSupport.firePropertyChange(PROP_REFRESH_TIME, oldRefreshTime, refreshTime);
+        setIntProperty(PROP_REFRESH_TIME, refreshTime, DEFAULT_REFRESH_TIME);
     }
 
     /**
@@ -90,9 +88,7 @@ public class SFTPSettings {
      * @param askWhichFile new value of askWhichFile
      */
     public void setAskWhichFile(boolean askWhichFile) {
-        boolean oldAskWhichFile = getPreferences().getBoolean(PROP_ASK_WHICH_FILE, DEFAULT_ASK_WHICH_FILE);
-        getPreferences().putBoolean(PROP_ASK_WHICH_FILE, askWhichFile);
-        propertyChangeSupport.firePropertyChange(PROP_ASK_WHICH_FILE, oldAskWhichFile, askWhichFile);
+        setBooleanProperty(PROP_ASK_WHICH_FILE, askWhichFile, DEFAULT_ASK_WHICH_FILE);
     }
 
     /**
@@ -110,9 +106,7 @@ public class SFTPSettings {
      * @param refreshServer new value of refreshServer
      */
     public void setRefreshServer(boolean refreshServer) {
-        boolean oldRefreshServer = getPreferences().getBoolean(PROP_REFRESH_SERVER, DEFAULT_REFRESH_SERVER);
-        getPreferences().putBoolean(PROP_REFRESH_SERVER, refreshServer);
-        propertyChangeSupport.firePropertyChange(PROP_REFRESH_SERVER, oldRefreshServer, refreshServer);
+        setBooleanProperty(PROP_REFRESH_SERVER, refreshServer, DEFAULT_REFRESH_SERVER);
     }
 
     /**
@@ -130,9 +124,7 @@ public class SFTPSettings {
      * @param scanCache new value of scanCache
      */
     public void setScanCache(boolean scanCache) {
-        boolean oldScanCache = getPreferences().getBoolean(PROP_SCAN_CACHE, DEFAULT_SCAN_CACHE);
-        getPreferences().putBoolean(PROP_SCAN_CACHE, scanCache);
-        propertyChangeSupport.firePropertyChange(PROP_SCAN_CACHE, oldScanCache, scanCache);
+        setBooleanProperty(PROP_SCAN_CACHE, scanCache, DEFAULT_SCAN_CACHE);
     }
 
     /**
@@ -150,9 +142,7 @@ public class SFTPSettings {
      * @param alwaysRefresh new value of alwaysRefresh
      */
     public void setAlwaysRefresh(boolean alwaysRefresh) {
-        boolean oldAlwaysRefresh = getPreferences().getBoolean(PROP_ALWAYS_REFRESH, DEFAULT_ALWAYS_REFRESH);
-        getPreferences().putBoolean(PROP_ALWAYS_REFRESH, alwaysRefresh);
-        propertyChangeSupport.firePropertyChange(PROP_ALWAYS_REFRESH, oldAlwaysRefresh, alwaysRefresh);
+        setBooleanProperty(PROP_ALWAYS_REFRESH, alwaysRefresh, DEFAULT_ALWAYS_REFRESH);
     }
 
     /**
@@ -170,11 +160,8 @@ public class SFTPSettings {
      * @param downloadServerChangedFile new value of downloadServerChangedFile
      */
     public void setDownloadServerChangedFile(boolean downloadServerChangedFile) {
-        boolean oldDownloadServerChangedFile = getPreferences().getBoolean(PROP_DOWNLOAD_SERVER_CHANGED_FILE,
+        setBooleanProperty(PROP_DOWNLOAD_SERVER_CHANGED_FILE, downloadServerChangedFile,
                 DEFAULT_DOWNLOAD_SERVER_CHANGED_FILE);
-        getPreferences().putBoolean(PROP_DOWNLOAD_SERVER_CHANGED_FILE, downloadServerChangedFile);
-        propertyChangeSupport.firePropertyChange(PROP_DOWNLOAD_SERVER_CHANGED_FILE,
-                oldDownloadServerChangedFile, downloadServerChangedFile);
     }
 
     /**
@@ -192,9 +179,7 @@ public class SFTPSettings {
      * @param offlineChanges new value of offlineChanges
      */
     public void setOfflineChanges(boolean offlineChanges) {
-        boolean oldOfflineChanges = getPreferences().getBoolean(PROP_OFFLINE_CHANGES, DEFAULT_OFFLINE_CHANGES);
-        getPreferences().putBoolean(PROP_OFFLINE_CHANGES, offlineChanges);
-        propertyChangeSupport.firePropertyChange(PROP_OFFLINE_CHANGES, oldOfflineChanges, offlineChanges);
+        setBooleanProperty(PROP_OFFLINE_CHANGES, offlineChanges, DEFAULT_OFFLINE_CHANGES);
     }
 
     /**
@@ -212,9 +197,7 @@ public class SFTPSettings {
      * @param askServerChangedFile new value of askServerChangedFile
      */
     public void setAskServerChangedFile(boolean askServerChangedFile) {
-        boolean oldAskServerChangedFile = getPreferences().getBoolean(PROP_ASK_SERVER_CHANGED_FILE, DEFAULT_ASK_SERVER_CHANGED_FILE);
-        getPreferences().putBoolean(PROP_ASK_SERVER_CHANGED_FILE, askServerChangedFile);
-        propertyChangeSupport.firePropertyChange(PROP_ASK_SERVER_CHANGED_FILE, oldAskServerChangedFile, askServerChangedFile);
+        setBooleanProperty(PROP_ASK_SERVER_CHANGED_FILE, askServerChangedFile, DEFAULT_ASK_SERVER_CHANGED_FILE);
     }
 
     /**
@@ -232,9 +215,7 @@ public class SFTPSettings {
      * @param askCacheExternalDelete new value of askCacheExternalDelete
      */
     public void setAskCacheExternalDelete(boolean askCacheExternalDelete) {
-        boolean oldAskCacheExternalDelete = getPreferences().getBoolean(PROP_ASK_CACHE_EXTERNAL_DELETE, DEFAULT_ASK_CACHE_EXTERNAL_DELETE);
-        getPreferences().putBoolean(PROP_ASK_CACHE_EXTERNAL_DELETE, askCacheExternalDelete);
-        propertyChangeSupport.firePropertyChange(PROP_ASK_CACHE_EXTERNAL_DELETE, oldAskCacheExternalDelete, askCacheExternalDelete);
+        setBooleanProperty(PROP_ASK_CACHE_EXTERNAL_DELETE, askCacheExternalDelete, DEFAULT_ASK_CACHE_EXTERNAL_DELETE);
     }
 
     /**
@@ -252,9 +233,7 @@ public class SFTPSettings {
      * @param cacheExternalDelete new value of cacheExternalDelete
      */
     public void setCacheExternalDelete(boolean cacheExternalDelete) {
-        boolean oldCacheExternalDelete = getPreferences().getBoolean(PROP_CACHE_EXTERNAL_DELETE, DEFAULT_CACHE_EXTERNAL_DELETE);
-        getPreferences().putBoolean(PROP_CACHE_EXTERNAL_DELETE, cacheExternalDelete);
-        propertyChangeSupport.firePropertyChange(PROP_CACHE_EXTERNAL_DELETE, oldCacheExternalDelete, cacheExternalDelete);
+        setBooleanProperty(PROP_CACHE_EXTERNAL_DELETE, cacheExternalDelete, DEFAULT_CACHE_EXTERNAL_DELETE);
     }
 
     /**
@@ -272,9 +251,7 @@ public class SFTPSettings {
      * @param offlineChanges new value of offlineChanges
      */
     public void setAskServerExternalDelete(boolean askServerExternalDelete) {
-        boolean oldAskServerExternalDelete = getPreferences().getBoolean(PROP_ASK_SERVER_EXTERNAL_DELETE, DEFAULT_ASK_SERVER_EXTERNAL_DELETE);
-        getPreferences().putBoolean(PROP_ASK_SERVER_EXTERNAL_DELETE, askServerExternalDelete);
-        propertyChangeSupport.firePropertyChange(PROP_ASK_SERVER_EXTERNAL_DELETE, oldAskServerExternalDelete, askServerExternalDelete);
+        setBooleanProperty(PROP_ASK_SERVER_EXTERNAL_DELETE, askServerExternalDelete, DEFAULT_ASK_SERVER_EXTERNAL_DELETE);
     }
 
     /**
@@ -292,9 +269,7 @@ public class SFTPSettings {
      * @param serverExternalDelete new value of serverExternalDelete
      */
     public void setServerExternalDelete(boolean serverExternalDelete) {
-        boolean oldServerExternalDelete = getPreferences().getBoolean(PROP_SERVER_EXTERNAL_DELETE, DEFAULT_SERVER_EXTERNAL_DELETE);
-        getPreferences().putBoolean(PROP_SERVER_EXTERNAL_DELETE, serverExternalDelete);
-        propertyChangeSupport.firePropertyChange(PROP_SERVER_EXTERNAL_DELETE, oldServerExternalDelete, serverExternalDelete);
+        setBooleanProperty(PROP_SERVER_EXTERNAL_DELETE, serverExternalDelete, DEFAULT_SERVER_EXTERNAL_DELETE);
     }
 
     /**
@@ -313,6 +288,18 @@ public class SFTPSettings {
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    private void setBooleanProperty(String property, boolean value, boolean defaultValue) {
+        boolean oldValue = getPreferences().getBoolean(property, defaultValue);
+        getPreferences().putBoolean(PROP_SERVER_EXTERNAL_DELETE, value);
+        propertyChangeSupport.firePropertyChange(property, oldValue, value);
+    }
+
+    private void setIntProperty(String property, int value, int defaultValue) {
+        int oldValue = getPreferences().getInt(property, defaultValue);
+        getPreferences().putInt(PROP_SERVER_EXTERNAL_DELETE, value);
+        propertyChangeSupport.firePropertyChange(property, oldValue, value);
     }
 
     private static Preferences getPreferences() {

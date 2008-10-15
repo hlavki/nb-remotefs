@@ -10,6 +10,7 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.File;
 import java.util.Properties;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -255,7 +256,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
     }
 
     public Node.Property[] getNodeProperties(RemoteFileSystem fs) {
-        Node.Property[] props = new Node.Property[5];
+        Node.Property[] props = new Node.Property[6];
         try {
             props[0] = new PropertySupport.Reflection<String>(fs, String.class, "server");
             props[0].setName("Server name or IP");
@@ -267,8 +268,8 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
             props[3].setName("Port");
             props[4] = new PropertySupport.Reflection<String>(fs, String.class, "startDir");
             props[4].setName("Root folder");
-//            Property prop6 = new PropertySupport.Reflection(site, File.class, "cache");
-//            prop6.setName("cache folder");
+            props[5] = new PropertySupport.Reflection<File>(fs, File.class, "getCacheAsFile", null);
+            props[5].setName("cache folder");
         } catch (NoSuchMethodException ex) {
             Exceptions.printStackTrace(ex);
         }
