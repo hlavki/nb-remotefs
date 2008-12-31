@@ -39,8 +39,11 @@
  *
  * Contributor(s): Libor Martinek.
  */
-
 package org.netbeans.modules.remotefs.api;
+
+import java.io.File;
+import java.io.IOException;
+import org.openide.filesystems.FileUtil;
 
 /** RemoteOutputStream that subclasses FileOutputStream and overwrites close() method to notify FTPFile.
  *
@@ -48,24 +51,24 @@ package org.netbeans.modules.remotefs.api;
  * @version 1.0
  */
 public class RemoteOutputStream extends java.io.FileOutputStream {
-     private RemoteFile file;
 
-     /** Creates new FTPOutputStream.
+    private RemoteFile file;
+
+    /** Creates new FTPOutputStream.
      * @param file FTPFile
      * @throws IOException
      */
     public RemoteOutputStream(RemoteFile file) throws java.io.IOException {
-      super(file.file);
-      this.file = file;
+      super(FileUtil.toFile(file.getFileObject()));
+        this.file = file;
     }
-     
-     /** Close the stream and notify FTPFile.
+
+    /** Close the stream and notify FTPFile.
      * @throws IOException
      */
     @Override
     public void close() throws java.io.IOException {
-      super.close();
-      file.save();
+        super.close();
+        file.save();
     }
-     
 } 

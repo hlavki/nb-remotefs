@@ -123,7 +123,7 @@ public class SFTPClient implements RemoteClient {
         log.fine("Sending data from " + what.getAbsolutePath() + " to " + where.getFullName());
         try {
             inData = new FileInputStream(what);
-            fileOut = channel.put(where.getFullName(), new SFTPProgressHandle(), ChannelSftp.OVERWRITE);
+            fileOut = channel.put(where.getFullName(), (SFTPProgressHandle) null, ChannelSftp.OVERWRITE);
             byte[] buffer = new byte[BUFFER];
             int len;
             while ((len = inData.read(buffer)) != -1) {

@@ -451,7 +451,6 @@ public class FTPClient implements RemoteClient {
         }
     }
 
-    //***************************************************************************
     /** Get file from server.
      * @param what
      * @param where
@@ -579,7 +578,7 @@ public class FTPClient implements RemoteClient {
     //***************************************************************************
   /* Parse list obtained from server for file attributes
      */
-    private FTPFileAttributes[] parseList(StringTokenizer stoken, String name) {
+    private FTPFileAttributes[] parseList(StringTokenizer stoken, RemoteFileName name) {
         //TODO - soft links, /dev dir, dir with spaces
         StringTokenizer line;
         FTPFileAttributes attrib[] = null;
@@ -607,9 +606,9 @@ public class FTPClient implements RemoteClient {
                             }
                         }
                         if (word.startsWith("d")) {
-                            at.setIsDirectory(true);
+                            at.setDirectory(true);
                         } else if (word.startsWith("-")) {
-                            at.setIsDirectory(false);
+                            at.setDirectory(false);
                         } else {
                             skip = true;
                         }
@@ -630,7 +629,7 @@ public class FTPClient implements RemoteClient {
                         break;
                     case 4:
                         try {
-                            at.setSize(Integer.parseInt(word));
+                            at.setSize(Long.parseLong(word));
                         } catch (NumberFormatException e) {
                             error = true;
                         }
@@ -654,7 +653,7 @@ public class FTPClient implements RemoteClient {
                         }
                         break;
                     case 8:
-                        at.setName(new FTPFileName(name, word));
+                        at.setName(new FTPFileName(name.getDirectory(), word));
                         if ((word.equals(".") || word.equals("..")) && count <= 2) {
                             skip = true;
                         }
@@ -771,7 +770,7 @@ public class FTPClient implements RemoteClient {
             }
         }
         StringTokenizer stoken = new StringTokenizer(sbuffer.toString(), "\r\n");
-        RemoteFileAttributes[] result = parseList(stoken, ((FTPFileName) directory).getFullName());
+        RemoteFileAttributes[] result = parseList(stoken, directory);
         log.info("Returning " + result.length + " files...");
         return result;
     }

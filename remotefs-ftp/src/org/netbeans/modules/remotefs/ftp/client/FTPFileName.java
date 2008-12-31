@@ -83,7 +83,7 @@ public class FTPFileName implements RemoteFileName {
 
     /** Get directory of this filename
      * @return directory of this filename */
-    protected String getDirectory() {
+    public String getDirectory() {
         return directory;
     }
 
@@ -98,5 +98,31 @@ public class FTPFileName implements RemoteFileName {
      * @return root */
     public static RemoteFileName getRoot() {
         return new FTPFileName("", "/");
+    }
+
+    @Override
+    public String toString() {
+        return "[ DIR:" + getDirectory() + " FILE: " + getName() + " ]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof FTPFileName)) {
+            return false;
+        }
+        FTPFileName iObj = (FTPFileName) obj;
+        return name == null ? iObj.name == null : name.equals(iObj.name) &&
+                directory == null ? iObj.directory == null : directory.equals(iObj.directory);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.directory != null ? this.directory.hashCode() : 0);
+        return hash;
     }
 }

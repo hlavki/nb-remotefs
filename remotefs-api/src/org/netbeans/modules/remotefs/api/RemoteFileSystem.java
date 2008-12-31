@@ -48,13 +48,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.netbeans.modules.remotefs.api.config.CacheProvider;
 import org.netbeans.modules.remotefs.api.config.RemoteFsCacheProvider;
 import org.openide.filesystems.AbstractFileSystem;
 import org.openide.filesystems.DefaultAttributes;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileStatusEvent;
 import org.openide.filesystems.FileUtil;
-import org.openide.filesystems.Repository;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
@@ -66,12 +66,10 @@ import org.openide.util.actions.SystemAction;
  */
 public abstract class RemoteFileSystem extends AbstractFileSystem
         implements AbstractFileSystem.List, AbstractFileSystem.Info, AbstractFileSystem.Change,
-        RemoteFile.Notify, RemoteFile.RequestProcessor {
+        RemoteFileNotify {
 
     private static final Logger log = Logger.getLogger(RemoteFileSystem.class.getName());
-    private static final String NB_USER_DIR = "netbeans.user";   //NOI18N
     protected static final String DEFAULT_ROOT_DIR = "/";
-    private static final String DEFAULT_SEPARATOR = "/";
     /** remote client */
     protected transient RemoteClient client;
     /** root file */
@@ -81,11 +79,13 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** Server start directory */
     protected String startDir = DEFAULT_ROOT_DIR;
     /** path separator */
-    protected String separator = DEFAULT_SEPARATOR;
+    protected String separator = RemoteFile.PATH_SEPARATOR;
     /** Login information */
     protected LogInfo logInfo;
     /** is read only */
     protected boolean readOnly;
+    /** Cache provider */
+    private CacheProvider cacheProvider;
 
     /** Constructor.
      */
@@ -93,11 +93,12 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         info = this;
         change = this;
         this.logInfo = logInfo;
+        this.cacheProvider = new RemoteFsCacheProvider(logInfo);
         DefaultAttributes a = new DefaultAttributes(info, change, this);
         attr = a;
         list = a;
         try {
-            cacheDir = new RemoteFsCacheProvider(logInfo).getCacheDirectory();
+            cacheDir = getCacheProvider().getCacheDirectory();
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -231,7 +232,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws IOException
      * @return  */
     public RemoteFile createRootFile(RemoteClient client, FileObject cache) throws IOException {
-        return new RemoteFile(client, this, this, FileUtil.toFile(cache));
+        return new RemoteFile(client, this, cache);
     }
 
     /** Set whether the file system should be read only.
@@ -289,6 +290,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** Synchronize specified directory
      * @param name name of directory to synchronize */
     public void synchronize(String name) {
+        log.info("trying to synchronize...");
         if (!isReady()) {
             return;
         }
@@ -316,46 +318,48 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     /** Download whole directory with subdirectories to cache.
      * @param name name of directory to download1 */
     public void downloadAll(String name) {
-        if (!isReady()) {
-            return;
-        }
-        try {
-            final RemoteFile f = getRemoteFile(name);
-            if (f != null) {
-                post(new Runnable() {
-
-                    public void run() {
-                        try {
-                            f.downloadAll();
-                        } catch (IOException e) {
-                            Exceptions.printStackTrace(e);
-                        }
-                    }
-                });
-            } else {
-                log.warning("File " + name + " not found!");
-            }
-        } catch (IOException e) {
-            Exceptions.printStackTrace(e);
-        }
+//        if (!isReady()) {
+//            return;
+//        }
+//        try {
+//            final RemoteFile f = getRemoteFile(name);
+//            if (f != null) {
+//                post(new Runnable() {
+//
+//                    public void run() {
+//                        try {
+//                            f.downloadAll();
+//                        } catch (IOException e) {
+//                            Exceptions.printStackTrace(e);
+//                        }
+//                    }
+//                });
+//            } else {
+//                log.warning("File " + name + " not found!");
+//            }
+//        } catch (IOException e) {
+//            Exceptions.printStackTrace(e);
+//        }
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     /** Clean cache. Remove all files from cache.
      * @param name name of directory to clean */
     public void cleanCache(String name) {
-        if (!isReady()) {
-            return;
-        }
-        try {
-            RemoteFile f = getRemoteFile(name);
-            if (f != null) {
-                f.cleanCache();
-            } else {
-                log.warning("File " + name + " not found!");
-            }
-        } catch (IOException e) {
-            Exceptions.printStackTrace(e);
-        }
+//        if (!isReady()) {
+//            return;
+//        }
+//        try {
+//            RemoteFile f = getRemoteFile(name);
+//            if (f != null) {
+//                f.cleanCache();
+//            } else {
+//                log.warning("File " + name + " not found!");
+//            }
+//        } catch (IOException e) {
+//            Exceptions.printStackTrace(e);
+//        }
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     //
@@ -521,7 +525,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         try {
             RemoteFile f = getRemoteFile(name);
             if (f != null) {
-                date = f.lastModified();
+                date = f.getLastModified();
             } else {
                 log.warning("File " + name + " not found!");
             }
@@ -697,5 +701,9 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     public void post(Runnable run) {
         RequestProcessor processor = RequestProcessor.getDefault();
         processor.post(run);
+    }
+
+    public CacheProvider getCacheProvider() {
+        return cacheProvider;
     }
 } 

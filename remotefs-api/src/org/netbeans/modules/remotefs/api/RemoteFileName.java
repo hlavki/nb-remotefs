@@ -39,7 +39,6 @@
  *
  * Contributor(s): Libor Martinek.
  */
-
 package org.netbeans.modules.remotefs.api;
 
 /** Object that is used in RemoteClient for identifing file name.
@@ -51,19 +50,30 @@ public interface RemoteFileName {
 
     /** Get the name. Only last name is returned, not whole path
      * @return  name of this object */
-    public abstract String getName();
+    String getName();
+
+    /**
+     * get the directory path without file name
+     * @return directory path
+     */
+    String getDirectory();
 
     /** Set new name. Used for renaming. Only name is chnaged, path remains.
      * @param newname  new name */
-    public abstract void setName(String newname);
+    void setName(String name);
 
     /** Get full name (with whole path).
      * @return  full name*/
-    public abstract String getFullName();
-    
+    String getFullName();
+
     /** Create new name object under this name object.
      * @param name name of new name object
      * @return created name object */
-    public abstract RemoteFileName createNew(String name);
-    
+    RemoteFileName createNew(String name);
+
+    @Override
+    boolean equals(Object obj);
+
+    @Override
+    int hashCode();
 }

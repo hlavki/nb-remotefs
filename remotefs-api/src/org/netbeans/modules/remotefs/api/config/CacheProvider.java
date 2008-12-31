@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.netbeans.modules.remotefs.api.config;
 
 import java.io.IOException;
+import org.netbeans.modules.remotefs.api.RemoteFile;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -14,8 +14,7 @@ import org.openide.filesystems.FileObject;
  * @see org.netbeans.api.project.Project#getLookup
  * @author Michal Hlavac
  */
-
-public interface CacheDirectoryProvider {
+public interface CacheProvider {
 
     /**
      * Get a directory in which modules may store disposable cached information
@@ -28,5 +27,4 @@ public interface CacheDirectoryProvider {
      * @throws IOException if it cannot be created or loaded
      */
     FileObject getCacheDirectory() throws IOException;
-
 }

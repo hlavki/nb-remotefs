@@ -49,7 +49,7 @@ import org.openide.filesystems.FileStatusEvent;
  * @version 1.0
  */
 public abstract class ManagedRemoteFileSystem extends RemoteFileSystem
-        implements RemoteManager.RemoteOwner, RemoteFile.Notify {
+        implements RemoteManager.RemoteOwner, RemoteFileNotify {
 
     /** RemoteManager */
     protected transient RemoteManager manager = null;

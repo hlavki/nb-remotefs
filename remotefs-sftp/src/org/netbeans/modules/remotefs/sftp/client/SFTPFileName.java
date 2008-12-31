@@ -44,7 +44,7 @@ public class SFTPFileName implements RemoteFileName {
 
     /** Get directory of this filename
      * @return directory of this filename */
-    protected String getDirectory() {
+    public String getDirectory() {
         return directory;
     }
 

@@ -7,6 +7,7 @@ package org.netbeans.modules.remotefs.api.config;
 import java.io.File;
 import java.io.IOException;
 import org.netbeans.modules.remotefs.api.LogInfo;
+import org.netbeans.modules.remotefs.api.RemoteFile;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 
@@ -15,7 +16,7 @@ import org.openide.filesystems.FileUtil;
  * directory space of the currently running IDE.
  * @author mkleint
  */
-public class RemoteFsCacheProvider implements CacheDirectoryProvider {
+public class RemoteFsCacheProvider implements CacheProvider {
 
     private LogInfo logInfo;
 

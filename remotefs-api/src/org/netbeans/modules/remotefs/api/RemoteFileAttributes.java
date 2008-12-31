@@ -43,93 +43,109 @@ package org.netbeans.modules.remotefs.api;
 
 import java.util.Date;
 
-/** Remote File attributes. Class for storing attributes for files from remote server.
+/**
  *
- * @author  Libor Martinek
- * @version 1.0
+ * @author hlavki
  */
 public class RemoteFileAttributes {
 
-    private RemoteFileName name = null;
-    private boolean isdirectory = true;
-    private long size = 0;
-    private java.util.Date date = new java.util.Date(0);
+    private boolean directory;
+    private RemoteFileName name;
+    private Long size;
+    private Date lastModified;
+    private boolean writeable;
+    private boolean readable;
 
-    /** Creates new RemoteFileAttributes
-     * @param name name
-     * @param isdirectory whether it's directory
-     * @param size size of file
-     * @param date last modification date */
-    public RemoteFileAttributes(RemoteFileName name, boolean isdirectory, long size, java.util.Date date) {
-        this.name = name;
-        this.isdirectory = isdirectory;
-        this.size = size;
-        this.date = date;
-    }
-
-    /** Creates empty RemoteFileAttributes */
     public RemoteFileAttributes() {
     }
 
-    /** Creates RemoteFileAttributes specified with name and isdirectory flag
-     * @param name name
-     * @param isdirectory whether it's directory */
-    public RemoteFileAttributes(RemoteFileName name, boolean isdirectory) {
+    public RemoteFileAttributes(RemoteFileName name, boolean directory, Long size, Date lastModified) {
         this.name = name;
-        this.isdirectory = isdirectory;
-    }
-
-    /** Set name of file
-     * @param name name */
-    public void setName(RemoteFileName name) {
-        this.name = name;
-    }
-
-    /** Set whether it is directory
-     * @param dir true if it's directory */
-    public void setIsDirectory(boolean dir) {
-        this.isdirectory = dir;
-    }
-
-    /** Set size of file
-     * @param size size of file */
-    public void setSize(long size) {
+        this.directory = directory;
         this.size = size;
+        this.lastModified = lastModified;
     }
 
-    /** Set date of last modification
-     * @param date set last modification date */
-    public void setDate(Date date) {
-        this.date = date;
+    public RemoteFileAttributes(RemoteFileName name, boolean directory) {
+        this(name, directory, null, null);
     }
 
-    /** Tet name of file
-     * @return  name*/
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public boolean isDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(boolean directory) {
+        this.directory = directory;
+    }
+
     public RemoteFileName getName() {
         return name;
     }
 
-    /** Test whether it is directory
-     * @return true if it is directory */
-    public boolean isDirectory() {
-        return isdirectory;
+    public void setName(RemoteFileName name) {
+        this.name = name;
     }
 
-    /** Get size of file
-     * @return  size*/
-    public long getSize() {
+    public Long getSize() {
         return size;
     }
 
-    /** Get date of last modification
-     * @return  last modification date*/
-    public Date getDate() {
-        return date;
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
+    public boolean isReadable() {
+        return readable;
+    }
+
+    public void setReadable(boolean readable) {
+        this.readable = readable;
+    }
+
+    public boolean isWriteable() {
+        return writeable;
+    }
+
+    public void setWriteable(boolean writeable) {
+        this.writeable = writeable;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof RemoteFileAttributes)) {
+            return false;
+        }
+        RemoteFileAttributes rfa = (RemoteFileAttributes) obj;
+        return name == null ? rfa.name == null : name.equals(rfa.name) &&
+                (size != null && size.equals(rfa.size)) &&
+                (lastModified != null && lastModified.equals(rfa.lastModified)) &&
+                directory == rfa.directory;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.directory ? 1 : 0);
+        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 79 * hash + (this.size != null ? this.size.hashCode() : 0);
+        hash = 79 * hash + (this.lastModified != null ? this.lastModified.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public String toString() {
-        return "[ FILE: " + getName() + " IS_DIR: " + isDirectory() + " SIZE: " + getSize() + " DATE: " + getDate() + " ]";
+        return "[ FILE: " + getName() + " IS_DIR: " + isDirectory() + " SIZE: " + getSize() +
+                " DATE: " + getLastModified() + " ]";
     }
-
 }
