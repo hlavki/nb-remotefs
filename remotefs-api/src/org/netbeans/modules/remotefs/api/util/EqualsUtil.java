@@ -5,10 +5,6 @@
 package org.netbeans.modules.remotefs.api.util;
 
 /**
- *
- * @author hlavki
- */
-/**
  * Collected methods which allow easy implementation of <code>equals</code>.
  *
  * Example use case in a class called Car:

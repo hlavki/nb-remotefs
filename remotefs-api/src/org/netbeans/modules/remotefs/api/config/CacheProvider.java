@@ -5,7 +5,6 @@
 package org.netbeans.modules.remotefs.api.config;
 
 import java.io.IOException;
-import org.netbeans.modules.remotefs.api.RemoteFile;
 import org.openide.filesystems.FileObject;
 
 /**
