@@ -13,7 +13,7 @@ import org.netbeans.modules.remotefs.api.ConnectAction;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.ui.resources.Bundle;
 import org.openide.filesystems.FileObject;
-import org.openide.filesystems.Repository;
+import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.nodes.FilterNode;
@@ -139,7 +139,7 @@ public class SiteNode extends FilterNode {
             site.cleanCache(site.getRoot().getName());
             site.removeNotify();
         }
-        DataObject find = DataObject.find(Repository.getDefault().getDefaultFileSystem().getRoot().getFileObject("FTPSites"));
+        DataObject find = DataObject.find(FileUtil.getConfigFile("FTPSites"));
         FileObject[] files = find.getPrimaryFile().getChildren();
         for (int i = 0; i < files.length; i++) {
             String lName = getName().substring(6);//strip off "ftp://" URL notation

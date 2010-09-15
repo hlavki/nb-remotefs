@@ -54,6 +54,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,8 +72,6 @@ import org.netbeans.modules.remotefs.api.RemoteFileName;
 public class FTPClient implements RemoteClient {
 
     private static final Logger log = Logger.getLogger(FTPClient.class.getName());
-    /** An empty array of File attributes. */
-    private static final FTPFileAttributes[] EMPTY_LIST = new FTPFileAttributes[0];
     /** Control connection stream */
     private BufferedReader in;
     /** Control connection stream */
@@ -580,8 +580,8 @@ public class FTPClient implements RemoteClient {
      */
     private FTPFileAttributes[] parseList(StringTokenizer stoken, RemoteFileName name) {
         //TODO - soft links, /dev dir, dir with spaces
+        List<FTPFileAttributes> result = new ArrayList<FTPFileAttributes>();
         StringTokenizer line;
-        FTPFileAttributes attrib[] = null;
         FTPFileAttributes at = null;
         String word;
         boolean skip = false;
@@ -672,19 +672,10 @@ public class FTPClient implements RemoteClient {
                 skip = false;
                 error = false;
             } else {
-                if (attrib == null) {
-                    attrib = new FTPFileAttributes[stoken.countTokens() + 1];
-                }
-                attrib[count] = at;
-                count++;
+                result.add(at);
             }
         }
-        if (attrib == null) {
-//      quick workaround - this method should not return null
-//      if (!anyerror)
-            attrib = EMPTY_LIST;
-        }
-        return attrib;
+        return result.toArray(new FTPFileAttributes[result.size()]);
     }
 
     /** List Parser interface 

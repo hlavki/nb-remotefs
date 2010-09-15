@@ -21,7 +21,7 @@ import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileRenameEvent;
 import org.openide.filesystems.FileSystem;
-import org.openide.filesystems.Repository;
+import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.util.RequestProcessor;
 
@@ -71,9 +71,8 @@ public final class RemoteFileSystemManager implements FileChangeListener {
     }
 
     // Private methods ---------------------------------------------------------
-    private void initFileSystems() {
-        FileSystem fs = Repository.getDefault().getDefaultFileSystem();
-        FileObject folder = fs.getRoot().getFileObject(REMOTE_FS_FOLDER);
+    private void initFileSystems() {        
+        FileObject folder = FileUtil.getConfigFile(REMOTE_FS_FOLDER);
         List<RemoteFsEntry> fsEntries = readFileSystems(folder);
         fileSystems = getListOfFileSystems(fsEntries);
     }

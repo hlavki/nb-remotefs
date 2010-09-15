@@ -62,7 +62,7 @@ public class ConnectionPersistenceManager implements Environment.Provider, Insta
     /**
      * The path where the connections are registered in the SystemFileSystem.
      */
-    public static final String REMOTE_FS_CONNECTIONS_PATH = "RemoteFileSystems"; // NOI18N
+    public static final String REMOTE_FS_CONNECTIONS_PATH = "org-netbeans-modules-remotefs"; // NOI18N
     private static final Logger log = Logger.getLogger(ConnectionPersistenceManager.class.getName());
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
     /**
@@ -179,7 +179,7 @@ public class ConnectionPersistenceManager implements Environment.Provider, Insta
      * Creates the XML file describing the specified connection.
      */
     public static DataObject create(LogInfo logInfo) throws IOException {
-        FileObject fo = Repository.getDefault().getDefaultFileSystem().findResource(REMOTE_FS_CONNECTIONS_PATH);
+        FileObject fo = FileUtil.getConfigFile(REMOTE_FS_CONNECTIONS_PATH);
         DataFolder df = DataFolder.findFolder(fo);
 
         AtomicWriter writer = new AtomicWriter(logInfo, df, convertToFileName(logInfo.getDisplayName()));
@@ -196,7 +196,7 @@ public class ConnectionPersistenceManager implements Environment.Provider, Insta
      */
     public static void remove(LogInfo connInfo) throws IOException {
         String name = connInfo.getDisplayName();
-        FileObject fo = Repository.getDefault().getDefaultFileSystem().findResource(REMOTE_FS_CONNECTIONS_PATH); //NOI18N
+        FileObject fo = FileUtil.getConfigFile(REMOTE_FS_CONNECTIONS_PATH); //NOI18N
         DataFolder folder = DataFolder.findFolder(fo);
         DataObject[] objects = folder.getChildren();
 
@@ -408,4 +408,3 @@ public class ConnectionPersistenceManager implements Environment.Provider, Insta
         }
     }
 }
-
