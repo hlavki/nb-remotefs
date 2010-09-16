@@ -110,9 +110,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
     public SystemAction[] getActions() {
         SystemAction actions[] = super.getActions();
         SystemAction newActions[] = new SystemAction[actions.length + 4];
-        for (int i = 0; i < actions.length; i++) {
-            newActions[i] = actions[i];
-        }
+        System.arraycopy(actions, 0, newActions, 0, actions.length);
         newActions[actions.length] = getAction(SynchronizeAction.class);
         newActions[actions.length + 1] = getAction(DownloadAllAction.class);
         newActions[actions.length + 2] = getAction(CleanCacheAction.class);
@@ -139,10 +137,14 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         post(new java.lang.Runnable() {
 
             public void run() {
-                setConnected(b);
-                getRoot().refresh();
+                connect(b);
             }
         });
+    }
+
+    public void connect(final boolean b) {
+        setConnected(b);
+        getRoot().refresh();
     }
 
     /** Whether filesystem is connected to server.
@@ -194,7 +196,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         //try { org.openide.loaders.DataObject.find(super.getRoot()).getNodeDelegate().setDisplayName(getDisplayName()); }
         //catch (org.openide.loaders.DataObjectNotFoundException e) {}
         firePropertyChange("connected", null, isConnected() ? Boolean.TRUE : Boolean.FALSE);
-    //firePropertyChange(PROP_SYSTEM_NAME, "", getSystemName());
+        //firePropertyChange(PROP_SYSTEM_NAME, "", getSystemName());
     }
 
     /**
@@ -308,7 +310,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                     }
                 });
             } else {
-                log.warning("File " + name + " not found!");
+                log.log(Level.WARNING, "File {0} not found!", name);
             }
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
@@ -372,7 +374,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public String[] children(String name) {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("START: Name: " + name);
+            log.log(Level.FINE, "START: Name: {0}", name);
         }
         String[] result = new String[0];
         if (!isReady()) {
@@ -385,7 +387,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
                     result = f.getStringChildren();
                 }
             } else {
-                log.warning("RemoteFileSystem.children: File " + name + " not found!");
+                log.log(Level.WARNING, "RemoteFileSystem.children: File {0} not found!", name);
             }
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
@@ -403,7 +405,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public void createFolder(String name) throws java.io.IOException {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         isReadyToModify();
         RemoteFile f = null;
@@ -419,7 +421,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         if (f != null) {
             f.createFolder(relname);
         } else {
-            log.warning("Parent of file " + name + " not found!");
+            log.log(Level.WARNING, "Parent of file {0} not found!", name);
         }
     }
 
@@ -429,7 +431,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public void createData(String name) throws IOException {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         isReadyToModify();
         RemoteFile f = null;
@@ -445,7 +447,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         if (f != null) {
             f.createData(relname);
         } else {
-            log.warning("Parent of file " + name + " not found!");
+            log.log(Level.WARNING, "Parent of file {0} not found!", name);
         }
     }
 
@@ -456,7 +458,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public void rename(String oldName, String newName) throws IOException {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Old name: " + oldName + ", New name: " + newName);
+            log.log(Level.FINE, "Old name: {0}, New name: {1}", new Object[]{oldName, newName});
         }
         isReadyToModify();
         RemoteFile of = getRemoteFile(oldName);
@@ -473,7 +475,6 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             int slash2 = nname.lastIndexOf(separator);
             if (slash1 != slash2 || !oname.substring(0, slash1).equals(nname.substring(0, slash2))) {
                 IOException e = new IOException("Can't rename !!!!!!");
-                e.printStackTrace();
                 throw e;
             }
             if (slash2 == -1) {
@@ -483,7 +484,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             }
             of.rename(name);
         } else {
-            log.warning("File " + oldName + " not found!");
+            log.log(Level.WARNING, "File {0} not found!", oldName);
         }
     }
 
@@ -494,14 +495,14 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public void delete(String name) throws IOException {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         isReadyToModify();
         RemoteFile file = getRemoteFile(name);
         if (file != null) {
             file.delete();
         } else {
-            log.warning("File " + name + " not found!");
+            log.log(Level.WARNING, "File {0} not found!", name);
         }
     }
 
@@ -516,7 +517,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public java.util.Date lastModified(String name) {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         java.util.Date date = new java.util.Date(0);
         if (!isReady()) {
@@ -527,7 +528,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             if (f != null) {
                 date = f.getLastModified();
             } else {
-                log.warning("File " + name + " not found!");
+                log.log(Level.WARNING, "File {0} not found!", name);
             }
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
@@ -541,7 +542,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public boolean folder(String name) {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         if (!isReady()) {
             return true;
@@ -551,7 +552,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             if (f != null) {
                 return f.isDirectory();
             } else {
-                log.warning("File " + name + " not found!");
+                log.log(Level.WARNING, "File {0} not found!", name);
             }
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
@@ -565,7 +566,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public boolean readOnly(String name) {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         if (!isReady()) {
             return false;
@@ -575,7 +576,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             if (f != null) {
                 return f.isReadOnly();
             } else {
-                System.out.println("File " + name + " not found!");
+                log.log(Level.WARNING, "File {0} not found!", name);
             }
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
@@ -601,7 +602,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public long size(String name) {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         if (!isReady()) {
             return 0;
@@ -611,7 +612,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             if (f != null) {
                 return f.getSize();
             } else {
-                log.warning("File " + name + " not found!");
+                log.log(Level.WARNING, "File {0} not found!", name);
             }
         } catch (IOException e) {
             Exceptions.printStackTrace(e);
@@ -627,7 +628,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public InputStream inputStream(String name) throws java.io.FileNotFoundException {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         InputStream is = null;
         try {
@@ -636,7 +637,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
             if (f != null) {
                 is = f.getInputStream();
             } else {
-                log.warning("File " + name + " not found!");
+                log.log(Level.WARNING, "File {0} not found!", name);
             }
         } catch (IOException e) {
             throw new FileNotFoundException(e.toString() + " NAME: " + name);
@@ -652,14 +653,14 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      */
     public OutputStream outputStream(String name) throws java.io.IOException {
         if (log.isLoggable(Level.FINE)) {
-            log.fine("Name: " + name);
+            log.log(Level.FINE, "Name: {0}", name);
         }
         isReadyToModify();
         RemoteFile f = getRemoteFile(name);
         if (f != null) {
             return f.getOutputStream();
         } else {
-            log.warning("File " + name + " not found!");
+            log.log(Level.WARNING, "File {0} not found!", name);
         }
         return null;
     }
@@ -669,7 +670,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @throws IOException
      */
     public void lock(String name) throws IOException {
-        log.fine("Locking file " + name);
+        log.log(Level.FINE, "Locking file {0}", name);
     }
 
     /** Does nothing to unlock the file.
@@ -677,7 +678,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
      * @param name name of the file
      */
     public void unlock(String name) {
-        log.fine("Unlocking file " + name);
+        log.log(Level.FINE, "Unlocking file {0}", name);
     }
 
     /** Does nothing to mark the file as unimportant.
@@ -703,7 +704,7 @@ public abstract class RemoteFileSystem extends AbstractFileSystem
         processor.post(run);
     }
 
-    public CacheProvider getCacheProvider() {
+    private CacheProvider getCacheProvider() {
         return cacheProvider;
     }
-} 
+}
