@@ -94,11 +94,21 @@ public class FTPURLMapper extends URLMapper {
      * @return a file system
      */
     private FTPFileSystem findFileSystem(URL url) {
-        String key = url.getAuthority();
+        log.log(Level.INFO, "Searching FileSystem in cache ...");
+        String key = getKeyFor(url);
         if (!fileSystemCache.containsKey(key)) {
+            log.info("FileSystem not found.");
             fileSystemCache.put(key, createFileSystem(url));
+        } else {
+            log.info("FileSystem found in cache.");
         }
-        return fileSystemCache.get(key);
+        FTPFileSystem result = fileSystemCache.get(key);
+        logFileSystemSettings(result);
+        return result;
+    }
+
+    private String getKeyFor(URL url) {
+        return url.getAuthority();
     }
 
     /**
@@ -107,6 +117,7 @@ public class FTPURLMapper extends URLMapper {
      * @return a new file system
      */
     private FTPFileSystem createFileSystem(URL url) {
+        log.log(Level.INFO, "Creating new FileSystem for host \"{0}\"", url.getHost());
         FTPFileSystem fs = new FTPFileSystem();
         try {
             fs.setServer(url.getHost());
@@ -127,7 +138,24 @@ public class FTPURLMapper extends URLMapper {
                         ex.getPropertyChangeEvent().getPropertyName(), ex.getPropertyChangeEvent().getNewValue()
                     });
         } finally {
+            logFileSystemSettings(fs);
+            log.info("FileSystem creation finished.");
             return fs;
         }
+    }
+
+    private void logFileSystemSettings(FTPFileSystem fs) {
+        log.log(Level.INFO, "Server: {0}", fs.getServer());
+        log.log(Level.INFO, "Port: {0}", fs.getPort());
+        log.log(Level.INFO, "Username: {0}", fs.getUsername());
+        log.log(Level.INFO, "Password: {0}", toAsterisks(fs.getPassword()));
+        log.log(Level.INFO, "Startdir: {0}", fs.getStartDir());
+    }
+
+    private String toAsterisks(String string) {
+        if (string != null) {
+            return string.replaceAll(".{1}?", "*");
+        }
+        return "";
     }
 }
