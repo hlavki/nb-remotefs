@@ -136,7 +136,7 @@ public class FTPFileSystem extends RemoteFileSystem implements FTPClient.Reconne
     /** Get FTPSettings object
      * @return 
      */
-    protected FTPSettings getFTPSettings() {
+    private FTPSettings getFTPSettings() {
         if (ftpsettings == null) {
             System.out.println("FTPSETTTNGS NULL");
             ftpsettings = FTPSettings.getDefault();

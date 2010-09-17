@@ -728,12 +728,13 @@ public class FTPClient implements RemoteClient {
      * @return
      */
     public synchronized RemoteFileAttributes[] list(RemoteFileName directory) throws IOException {
+        @SuppressWarnings("StringBufferMayBeStringBuilder")
         StringBuffer sbuffer = new StringBuffer();
         int count = 0;
         if (!isConnected()) {
             return new RemoteFileAttributes[0];
         }
-        log.info("Listing directory " + directory.getFullName());
+        log.log(Level.INFO, "Listing directory {0}", directory.getFullName());
         while (count++ < 2) {
             try {
                 Socket datasocket = openData(directory == null ? "LIST" : "LIST " + ((FTPFileName) directory).getFullName());

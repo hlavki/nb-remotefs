@@ -119,7 +119,7 @@ public class FTPURLMapper extends URLMapper {
             if (URLHelper.containsPort(url)) {
                 fs.setPort(url.getPort());
             }
-            fs.setStartDir("/");
+            fs.setStartDir("");
             fs.setAlwaysRefresh(true);
         } catch (PropertyVetoException ex) {
             log.log(Level.WARNING, "Cannot set file system property \"{0}\" to value \"{1}\".",

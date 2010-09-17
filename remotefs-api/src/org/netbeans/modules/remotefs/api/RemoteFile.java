@@ -1,13 +1,14 @@
 package org.netbeans.modules.remotefs.api;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -19,7 +20,7 @@ import static org.netbeans.modules.remotefs.api.RemoteFile.Status.*;
  */
 /**
  *
- * @author hlavki
+ * @author hlavki, stophi
  */
 public final class RemoteFile {
 
@@ -29,7 +30,7 @@ public final class RemoteFile {
     private RemoteFile parent;
     private RemoteClient client;
     private Status status;
-    private RemoteFile[] children = new RemoteFile[0];
+    private Map<String, RemoteFile> children;
     private RemoteFileSystem remoteFs;
     private FileObject file;
     private boolean onServer;
@@ -43,6 +44,7 @@ public final class RemoteFile {
         this.attributes = attributes;
         this.client = client;
         this.remoteFs = remoteFs;
+        this.children = new HashMap<String, RemoteFile>();
         status = NOT_CACHED;
         childrenChanged = true;
         createCacheFile();
@@ -84,37 +86,16 @@ public final class RemoteFile {
         return attributes.getName();
     }
 
-    /**
-     * Returns list of children
-     * @return list of children
-     * @throws java.io.IOException
-     */
-    public RemoteFile[] getChildren() throws IOException {
-        if (childrenChanged && remoteFs.isRefreshServer() && client.isConnected()) {
-            List<RemoteFile> childrenList = new ArrayList<RemoteFile>();
-            log.info("FUCk1: " + getName());
-            RemoteFileAttributes[] attrs = client.list(getName());
-            for (RemoteFileAttributes attr : attrs) {
-                RemoteFile rFile = new RemoteFile(attr, this, client, remoteFs);
-                childrenList.add(rFile);
-            }
-            childrenChanged = false;
-            children = childrenList.toArray(children);
-        }
-        return children;
-    }
-
     /** Get all children.
      * @return array of String of children
      * @throws java.io.IOException
      */
-    public String[] getStringChildren() throws IOException {
-        getChildren();
-        String s[] = new String[children.length];
-        for (int i = 0; i < children.length; i++) {
-            if (children[i] != null) {
-                s[i] = children[i].getName().getName();
-            }
+    public String[] getStringChildren() throws IOException {        
+        String s[] = new String[getChildren().size()];
+        int i = 0;
+        for (RemoteFile child : getChildren().values()) {
+            s[i] = child.getName().getName();
+            i++;
         }
         return s;
     }
@@ -123,43 +104,17 @@ public final class RemoteFile {
         log.info("Now synchronizing! It means doing nothing...");
     }
 
-    /** Get child specified by the name.
-     * @param name name of the child
-     * @return found child, or null
-     * @throws java.io.IOException
-     */
-    public RemoteFile getChild(String name) throws IOException {
-        getChildren();
-        return getExistingChild(name);
-    }
-
-    public RemoteFile getExistingChild(String name) throws IOException {
-        for (int i = 0; i < children.length; i++) {
-            if (children[i] != null && children[i].getName().getName().equals(name)) {
-                return children[i];
-            }
-        }
-        return null;
-    }
-
     public RemoteFile find(String name) throws IOException {
-        RemoteFile remoteFile = this, newfile;
+        RemoteFile result = this;
         if (name.equals(".")) {
-            return remoteFile;
+            return result;
         }
         StringTokenizer st = new StringTokenizer(name, PATH_SEPARATOR);
         while (st.hasMoreTokens()) {
-            String next = st.nextToken();
-            newfile = remoteFile.getExistingChild(next);
-            if (newfile == null) {
-                newfile = remoteFile.getChild(next);
-            }
-            remoteFile = newfile;
-            if (remoteFile == null) {
-                break;
-            }
+            String next = st.nextToken();                        
+            result = result.getChildren().get(next);
         }
-        return remoteFile;
+        return result;
     }
 
     public void createFolder(String name) {
@@ -269,7 +224,7 @@ public final class RemoteFile {
             } // TODO: get time from server?
             status = CACHED;
             onServer = true;
-        //System.out.println("RemoteFile.save: end. path="+getPath());
+            //System.out.println("RemoteFile.save: end. path="+getPath());
         }
 
     }
@@ -283,6 +238,36 @@ public final class RemoteFile {
      */
     public RemoteFile getParent() {
         return parent;
+    }
+
+    private Map<String, RemoteFile> createChildren() {
+        Map<String, RemoteFile> result = null;
+        if (remoteFs.isRefreshServer() && client.isConnected()) {
+            try {
+                log.log(Level.INFO, "Exploring directory: {0}", getName());
+                RemoteFileAttributes[] attrs = client.list(getName());
+                result = new HashMap<String, RemoteFile>(attrs.length);
+                for (RemoteFileAttributes attr : attrs) {
+                    RemoteFile rFile = new RemoteFile(attr, this, client, remoteFs);
+                    result.put(rFile.getName().getName(), rFile);
+                }
+            } catch (IOException ex) {
+                log.log(Level.SEVERE, "Cannot create children for folder " + getName().getFullName(), ex);
+            }
+        }
+        if (result == null) {
+            result = new HashMap<String, RemoteFile>();
+        }
+
+        childrenChanged = false;
+        return result;
+    }
+
+    private Map<String, RemoteFile> getChildren() {
+        if (childrenChanged) {
+            children = createChildren();
+        }
+        return children;
     }
 
     enum Status {
