@@ -301,7 +301,7 @@ public class FTPClient implements RemoteClient {
     }
 
     //***************************************************************************
-    /** Test whether the exception means that connection was lost. 
+    /** Test whether the exception means that connection was lost.
      */
     private boolean connLostException(IOException e) {
         boolean lost = (e instanceof SocketException || (e instanceof FTPException && ((FTPException) e).getResponse().getCode() == 421));
@@ -344,7 +344,7 @@ public class FTPClient implements RemoteClient {
     }
 
     //***************************************************************************
-    /** Opens data connection and send command 
+    /** Opens data connection and send command
      * @param command command to send
      * @throws IOException
      * @return created data socket
@@ -542,7 +542,7 @@ public class FTPClient implements RemoteClient {
     StringBuffer sbuffer = new StringBuffer();
     int count = 0;
     while (count++ < 2) {
-    try { 
+    try {
     // open data connection
     Socket datasocket = openData(directory==null?"NLST":"NLST "+directory);
     // open stream
@@ -556,7 +556,7 @@ public class FTPClient implements RemoteClient {
     // close stream
     datain.close();
     // close data connection
-    closeData(datasocket);  	
+    closeData(datasocket);
     break;
     }
     catch (IOException se) {
@@ -564,16 +564,16 @@ public class FTPClient implements RemoteClient {
     if (reconn.notifyReconnect(se.toString())) reconnect();
     else return new String[0];
     else throw se;
-    }  
+    }
     }
     // convert string tokenizer to array of strings
     StringTokenizer stoken = new StringTokenizer(sbuffer.toString(),"\r\n");
     String list[] = new String[stoken.countTokens()];
     int counttoken=0;
-    while (stoken.hasMoreTokens()) 
+    while (stoken.hasMoreTokens())
     list[counttoken++]=stoken.nextToken();
     return list;
-    }	
+    }
      */
     //***************************************************************************
   /* Parse list obtained from server for file attributes
@@ -653,7 +653,8 @@ public class FTPClient implements RemoteClient {
                         }
                         break;
                     case 8:
-                        at.setName(new FTPFileName(name.getDirectory(), word));
+//                        at.setName(new FTPFileName(name.getDirectory(), word));
+                        at.setName(new FTPFileName(name.getFullName(), word)); // svw 2010-09-21
                         if ((word.equals(".") || word.equals("..")) && count <= 2) {
                             skip = true;
                         }
@@ -678,7 +679,7 @@ public class FTPClient implements RemoteClient {
         return result.toArray(new FTPFileAttributes[result.size()]);
     }
 
-    /** List Parser interface 
+    /** List Parser interface
      * @deprecated never used
      */
     @Deprecated
@@ -730,7 +731,7 @@ public class FTPClient implements RemoteClient {
     public synchronized RemoteFileAttributes[] list(RemoteFileName directory) throws IOException {
         @SuppressWarnings("StringBufferMayBeStringBuilder")
         StringBuffer sbuffer = new StringBuffer();
-        int count = 0;
+        int count = 0; // reconnect count
         if (!isConnected()) {
             return new RemoteFileAttributes[0];
         }
@@ -763,7 +764,9 @@ public class FTPClient implements RemoteClient {
         }
         StringTokenizer stoken = new StringTokenizer(sbuffer.toString(), "\r\n");
         RemoteFileAttributes[] result = parseList(stoken, directory);
-        log.info("Returning " + result.length + " files...");
+        log.log(Level.INFO, "Returning {0} files...", result.length);
+        for (RemoteFileAttributes rfa : result)
+            log.log(Level.INFO, "RemoteFileAttributes: {0}", rfa.getName().getFullName());
         return result;
     }
 
