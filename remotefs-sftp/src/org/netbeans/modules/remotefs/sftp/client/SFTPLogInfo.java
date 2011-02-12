@@ -20,11 +20,9 @@ import javax.swing.JTextField;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.sftp.SFTPFileSystem;
-import org.openide.DialogDisplayer;
 import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.util.Exceptions;
-import org.openide.windows.WindowManager;
 
 /**
  *
