@@ -20,9 +20,11 @@ import javax.swing.JTextField;
 import org.netbeans.modules.remotefs.api.LogInfo;
 import org.netbeans.modules.remotefs.api.RemoteFileSystem;
 import org.netbeans.modules.remotefs.sftp.SFTPFileSystem;
+import org.openide.DialogDisplayer;
 import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.util.Exceptions;
+import org.openide.windows.WindowManager;
 
 /**
  *
@@ -36,7 +38,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
     private static final String DEFAULT_PROTOCOL = "sftp";
     private static final String PROP_ROOT_FOLDER = "rootFolder";
     private static final long serialVersionUID = 1L;
-    private JTextField passwordField;
+    private final JTextField passwordField;
 
     public SFTPLogInfo() {
         this("localhost", System.getProperty("user.name"));
@@ -44,6 +46,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
 
     public SFTPLogInfo(Properties data) {
         super(data);
+        passwordField = new JPasswordField(20);
     }
 
     public SFTPLogInfo(String host, String user) {
@@ -88,7 +91,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
      * Set password
      * @param password
      */
-    public void setPassword(String password) {
+    public final void setPassword(String password) {
         setProperty(PROP_PASSWORD, password);
     }
 
@@ -104,7 +107,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
      * Set root folder
      * @param rootFolder root folder
      */
-    public void setRootFolder(String rootFolder) {
+    public final void setRootFolder(String rootFolder) {
         setProperty(PROP_ROOT_FOLDER, rootFolder);
     }
 
@@ -120,7 +123,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
      * Set user name
      * @param user user name
      */
-    public void setUser(String user) {
+    public final void setUser(String user) {
         setProperty(PROP_USER, user);
     }
 
@@ -140,7 +143,7 @@ public class SFTPLogInfo extends LogInfo implements UserInfo, UIKeyboardInteract
         setProperty(PROP_KEY_FILE, keyFile);
     }
 
-    public String getDisplayName() {
+    public final String getDisplayName() {
         return getProtocol() + "://" + getUser() + "@" + getHost() +
                 (getPort() == SFTPClient.DEFAULT_PORT ? "" : ":" + getPort());
     }

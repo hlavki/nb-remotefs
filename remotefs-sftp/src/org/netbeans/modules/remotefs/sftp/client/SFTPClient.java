@@ -60,6 +60,7 @@ public class SFTPClient implements RemoteClient {
             channel = (ChannelSftp) session.openChannel("sftp");
             channel.connect();
         } catch (JSchException e) {
+            log.log(Level.WARNING, "Cannot connect", e);
             throw new SFTPException(e.getMessage());
         }
     }
@@ -94,6 +95,7 @@ public class SFTPClient implements RemoteClient {
                 fileOut.write(buffer, 0, len);
             }
         } catch (SftpException e) {
+            log.log(Level.WARNING, "Cannot get channel " + what.getFullName(), e);
             throw new SFTPException(e.getMessage());
         } finally {
             if (fileOut != null) {
