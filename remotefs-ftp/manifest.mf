@@ -3,4 +3,4 @@ AutoUpdate-Show-In-Client: false
 OpenIDE-Module: org.netbeans.modules.remotefs.ftp
 OpenIDE-Module-Layer: org/netbeans/modules/remotefs/ftp/resources/layer.xml
 OpenIDE-Module-Localizing-Bundle: org/netbeans/modules/remotefs/ftp/resources/Bundle.properties
-OpenIDE-Module-Specification-Version: 0.1.2
+OpenIDE-Module-Specification-Version: 0.1.3
